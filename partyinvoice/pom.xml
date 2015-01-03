@@ -60,6 +60,9 @@
 					<include>**/*.fxml</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>resources</directory>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -68,6 +71,7 @@
 				<version>2.0</version>
 				<configuration>
 					<mainClass>com.illucit.partyinvoice.PartyInvoiceApp</mainClass>
+					<deployDir>${project.basedir}/resources/deploy</deployDir>
 				</configuration>
 			</plugin>
 			<plugin>

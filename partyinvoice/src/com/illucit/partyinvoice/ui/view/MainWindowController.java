@@ -1,17 +1,24 @@
 package com.illucit.partyinvoice.ui.view;
 
-import com.illucit.partyinvoice.ui.MainWindow;
-import com.illucit.partyinvoice.ui.model.PersonModel;
-
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.util.Callback;
+import javafx.scene.layout.AnchorPane;
+
+import com.illucit.partyinvoice.ui.MainWindow;
+import com.illucit.partyinvoice.ui.model.PersonModel;
 
 public class MainWindowController {
 
 	@FXML
+	private AnchorPane rightSidePane;
+	
+	@FXML
 	private ListView<PersonModel> personList;
+
+	@FXML
+	private Button addPersonButton;
 
 	private MainWindow mainWindow;
 
