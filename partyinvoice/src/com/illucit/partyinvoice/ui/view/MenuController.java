@@ -10,28 +10,10 @@ import com.illucit.partyinvoice.ui.MainWindow;
 public class MenuController {
 
 	@FXML
-	private MenuItem fileNew;
+	private MenuItem editUndo;
 
 	@FXML
-	private MenuItem fileLoad;
-
-	@FXML
-	private MenuItem fileSave;
-
-	@FXML
-	private MenuItem fileSaveAs;
-
-	@FXML
-	private MenuItem fileQuit;
-
-	@FXML
-	private MenuItem languageEn;
-
-	@FXML
-	private MenuItem languageDe;
-
-	@FXML
-	private MenuItem helpAbout;
+	private MenuItem editRedo;
 
 	private MainWindow mainWindow;
 
@@ -69,6 +51,26 @@ public class MenuController {
 
 	public void quit() {
 		mainWindow.quit();
+	}
+
+	public void editUndo() {
+		System.out.println("Undo");
+	}
+
+	public void editRedo() {
+		System.out.println("Redo");
+	}
+
+	public void editPersons() {
+		System.out.println("Persons");
+	}
+
+	public void editInvoices() {
+		System.out.println("Invoices");
+	}
+
+	public void editResult() {
+		System.out.println("Result");
 	}
 
 }

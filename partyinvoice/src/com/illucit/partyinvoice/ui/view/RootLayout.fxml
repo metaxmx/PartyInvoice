@@ -12,37 +12,67 @@
         <menus>
           <Menu text="%ui.menu.file">
             <items>
-                  <MenuItem fx:id="fileNew" onAction="#newProject" text="%ui.menu.file.new">
+                  <MenuItem onAction="#newProject" text="%ui.menu.file.new">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
                   <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem fx:id="fileLoad" onAction="#loadProject" text="%ui.menu.file.load">
+                  <MenuItem onAction="#loadProject" text="%ui.menu.file.load">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem fx:id="fileSave" onAction="#saveProject" text="%ui.menu.file.save">
+                  <MenuItem onAction="#saveProject" text="%ui.menu.file.save">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator>
                   </MenuItem>
-                  <MenuItem fx:id="fileSaveAs" onAction="#saveProjectAs" text="%ui.menu.file.saveas" />
+                  <MenuItem onAction="#saveProjectAs" text="%ui.menu.file.saveas" />
                   <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem fx:id="fileQuit" onAction="#quit" text="%ui.menu.file.quit">
+              <MenuItem onAction="#quit" text="%ui.menu.file.quit">
                      <accelerator>
                         <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                      </accelerator></MenuItem>
             </items>
           </Menu>
+            <Menu text="%ui.menu.edit">
+              <items>
+                <MenuItem fx:id="editUndo" onAction="#editUndo" text="%ui.menu.edit.undo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem fx:id="editRedo" onAction="#editRedo" text="%ui.menu.edit.redo">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem onAction="#editPersons" text="%ui.menu.edit.persons">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem onAction="#editInvoices" text="%ui.menu.edit.invoices">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+                  <MenuItem onAction="#editResult" text="%ui.menu.edit.result">
+                     <accelerator>
+                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                     </accelerator>
+                  </MenuItem>
+              </items>
+            </Menu>
           <Menu text="%ui.menu.language">
             <items>
-              <MenuItem fx:id="languageDe" onAction="#changeLocaleGerman" text="%ui.menu.language.de">
+              <MenuItem onAction="#changeLocaleGerman" text="%ui.menu.language.de">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="D" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator></MenuItem>
-                  <MenuItem fx:id="languageEn" onAction="#changeLocaleEnglish" text="%ui.menu.language.en">
+                  <MenuItem onAction="#changeLocaleEnglish" text="%ui.menu.language.en">
                      <accelerator>
                         <KeyCodeCombination alt="DOWN" code="E" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
                      </accelerator>
@@ -51,7 +81,7 @@
           </Menu>
           <Menu text="%ui.menu.help">
             <items>
-              <MenuItem fx:id="helpAbout" onAction="#about" text="%ui.menu.help.about" />
+              <MenuItem onAction="#about" text="%ui.menu.help.about" />
             </items>
           </Menu>
         </menus>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<VBox prefHeight="598.0" prefWidth="556.0" spacing="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+	<children>
+		<Label alignment="CENTER" prefWidth="2000.0" text="%ui.welcome.title" wrapText="true" VBox.vgrow="ALWAYS">
+			<VBox.margin>
+				<Insets />
+			</VBox.margin>
+			<font>
+				<Font name="System Bold" size="24.0" />
+			</font>
+		</Label>
+		<Label text="%ui.welcome.about" wrapText="true">
+			<VBox.margin>
+				<Insets />
+			</VBox.margin>
+			<font>
+				<Font size="16.0" />
+			</font>
+		</Label>
+		<Label text="%ui.welcome.step1" wrapText="true">
+			<VBox.margin>
+				<Insets left="20.0" top="10.0" />
+			</VBox.margin>
+			<font>
+				<Font size="14.0" />
+			</font>
+		</Label>
+      <Hyperlink text="%ui.welcome.step1.link">
+         <VBox.margin>
+            <Insets left="20.0" />
+         </VBox.margin>
+      </Hyperlink>
+		<Label text="%ui.welcome.step2" wrapText="true">
+			<padding>
+				<Insets left="20.0" top="10.0" />
+			</padding>
+			<font>
+				<Font size="14.0" />
+			</font>
+		</Label>
+      <Hyperlink text="%ui.welcome.step2.link">
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+      </Hyperlink>
+		<Label text="%ui.welcome.step3" wrapText="true">
+			<padding>
+				<Insets left="20.0" top="10.0" />
+			</padding>
+			<font>
+				<Font size="14.0" />
+			</font>
+		</Label>
+      <Hyperlink text="%ui.welcome.step3.link">
+         <padding>
+            <Insets left="20.0" />
+         </padding>
+      </Hyperlink>
+	</children>
+	<padding>
+		<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+	</padding>
+</VBox>

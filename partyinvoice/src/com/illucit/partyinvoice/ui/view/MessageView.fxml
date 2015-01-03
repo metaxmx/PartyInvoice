@@ -12,6 +12,10 @@
    </padding>
    <children>
       <Label fx:id="label" text="Label" />
-      <Button alignment="TOP_RIGHT" mnemonicParsing="false" onAction="#close" text="%ui.message.close" />
+      <HBox alignment="TOP_CENTER">
+         <children>
+            <Button alignment="TOP_CENTER" defaultButton="true" mnemonicParsing="false" onAction="#close" text="%ui.message.close" />
+         </children>
+      </HBox>
    </children>
 </VBox>

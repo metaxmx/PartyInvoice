@@ -268,6 +268,7 @@ public class MainWindow extends Application {
 			controller.setMessage(message);
 			controller.setMainWindow(this);
 
+			messageStage = new Stage();
 			messageStage.setTitle(title);
 			messageStage.setScene(new Scene(messageView));
 			messageStage.setResizable(false);
