@@ -8,83 +8,136 @@
 
 <BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.illucit.partyinvoice.view.RootController">
    <top>
-      <MenuBar BorderPane.alignment="CENTER">
-        <menus>
-          <Menu text="%ui.menu.file">
-            <items>
-                  <MenuItem onAction="#newProject" text="%ui.menu.file.new">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem onAction="#loadProject" text="%ui.menu.file.load">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem onAction="#saveProject" text="%ui.menu.file.save">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem onAction="#saveProjectAs" text="%ui.menu.file.saveas" />
-                  <SeparatorMenuItem mnemonicParsing="false" />
-              <MenuItem onAction="#quit" text="%ui.menu.file.quit">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator></MenuItem>
-            </items>
-          </Menu>
-            <Menu text="%ui.menu.edit">
+      <VBox>
+         <children>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu text="%ui.menu.file">
+                  <items>
+                        <MenuItem onAction="#newProject" text="%ui.menu.file.new">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem onAction="#loadProject" text="%ui.menu.file.load">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="L" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem onAction="#saveProject" text="%ui.menu.file.save">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="S" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem onAction="#saveProjectAs" text="%ui.menu.file.saveas" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                    <MenuItem onAction="#quit" text="%ui.menu.file.quit">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Q" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                  </items>
+                </Menu>
+                  <Menu text="%ui.menu.edit">
+                    <items>
+                      <MenuItem fx:id="menuUndo" onAction="#editUndo" text="%ui.menu.edit.undo">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem fx:id="menuRedo" onAction="#editRedo" text="%ui.menu.edit.redo">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem onAction="#editPersons" text="%ui.menu.edit.persons">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem onAction="#editInvoices" text="%ui.menu.edit.invoices">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem onAction="#editResult" text="%ui.menu.edit.result">
+                           <accelerator>
+                              <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                    </items>
+                  </Menu>
+                <Menu text="%ui.menu.language">
+                  <items>
+                    <MenuItem onAction="#changeLocaleGerman" text="%ui.menu.language.de">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="D" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                        <MenuItem onAction="#changeLocaleEnglish" text="%ui.menu.language.en">
+                           <accelerator>
+                              <KeyCodeCombination alt="DOWN" code="E" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
+                           </accelerator>
+                        </MenuItem>
+                  </items>
+                </Menu>
+                <Menu text="%ui.menu.help">
+                  <items>
+                    <MenuItem onAction="#about" text="%ui.menu.help.about" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <ToolBar prefHeight="40.0" prefWidth="200.0">
               <items>
-                <MenuItem fx:id="editUndo" onAction="#editUndo" text="%ui.menu.edit.undo">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Z" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem fx:id="editRedo" onAction="#editRedo" text="%ui.menu.edit.redo">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="Y" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <SeparatorMenuItem mnemonicParsing="false" />
-                  <MenuItem onAction="#editPersons" text="%ui.menu.edit.persons">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="P" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem onAction="#editInvoices" text="%ui.menu.edit.invoices">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="I" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-                  <MenuItem onAction="#editResult" text="%ui.menu.edit.result">
-                     <accelerator>
-                        <KeyCodeCombination alt="UP" code="R" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
+                <Button mnemonicParsing="false" text="Button" />
               </items>
-            </Menu>
-          <Menu text="%ui.menu.language">
-            <items>
-              <MenuItem onAction="#changeLocaleGerman" text="%ui.menu.language.de">
-                     <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="D" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
-                     </accelerator></MenuItem>
-                  <MenuItem onAction="#changeLocaleEnglish" text="%ui.menu.language.en">
-                     <accelerator>
-                        <KeyCodeCombination alt="DOWN" code="E" control="UP" meta="UP" shift="DOWN" shortcut="UP" />
-                     </accelerator>
-                  </MenuItem>
-            </items>
-          </Menu>
-          <Menu text="%ui.menu.help">
-            <items>
-              <MenuItem onAction="#about" text="%ui.menu.help.about" />
-            </items>
-          </Menu>
-        </menus>
-      </MenuBar>
+            </ToolBar>
+         </children>
+      </VBox>
    </top>
+   <center>
+     <AnchorPane prefHeight="600.0" prefWidth="800.0">
+   <children>
+      <SplitPane dividerPositions="0.3" layoutX="314.0" layoutY="76.0" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <Accordion fx:id="leftSideAccodion" layoutX="17.0" layoutY="163.0" prefHeight="598.0" prefWidth="235.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <panes>
+                      <TitledPane animated="false" text="%ui.tab.persons">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <Button fx:id="addPersonButton" layoutX="91.0" layoutY="-12.0" mnemonicParsing="false" prefHeight="25.0" text="%ui.persons.btn.add" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                    <ListView fx:id="personList" layoutX="40.0" layoutY="131.0" prefHeight="522.0" prefWidth="234.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
+                                 </children></AnchorPane>
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" expanded="false" text="%ui.tab.invoices">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                      <TitledPane animated="false" expanded="false" text="%ui.tab.result">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        </content>
+                      </TitledPane>
+                    </panes>
+                  </Accordion>
+               </children>
+            </AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+               <children>
+                  <BorderPane fx:id="rightSidePane" prefHeight="598.0" prefWidth="556.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
+     
+   </center>
 </BorderPane>

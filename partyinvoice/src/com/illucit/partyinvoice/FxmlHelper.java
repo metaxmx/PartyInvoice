@@ -23,6 +23,48 @@ public class FxmlHelper {
 
 	private static final String VIEW_PREFIX = "view/";
 
+	public static <T> T loadFxml(PartyInvoiceApp app, String view) {
+		return loadFxml(app, view, Object.class, null);
+	}
+
+	public static <C, T> T loadFxml(PartyInvoiceApp app, String view, Class<C> controllerClass,
+			InnerDocumentHandler<C> handler) {
+		ResourceBundle bundle = app.getBundle();
+
+		FXMLLoader loader = new FXMLLoader();
+		loader.setResources(bundle);
+		loader.setLocation(FxmlHelper.class.getResource(VIEW_PREFIX + view));
+
+		if (loader.getLocation() == null) {
+			logger.error("View not found: {}/{}", FxmlHelper.class.getPackage().getName().replace('.', '/'),
+					VIEW_PREFIX + view);
+			return null;
+		}
+
+		T viewParent;
+
+		try {
+			viewParent = loader.load();
+		} catch (IOException e) {
+			logger.error("Error loading view", e);
+			return null;
+		}
+
+		// Give the controller access to the main app.
+		C controller = loader.getController();
+		if (controller instanceof AbstractController) {
+			AbstractController cntrlr = (AbstractController) controller;
+			cntrlr.setApp(app);
+			cntrlr.setStage(app.getPrimaryStage());
+		}
+
+		if (handler != null) {
+			handler.handleDocument(controller, bundle);
+		}
+
+		return viewParent;
+	}
+
 	/**
 	 * Load Stage from FXML file. No handler for Stage and controller is given.
 	 * If the controller is an {@link AbstractController}, the app is
@@ -35,9 +77,11 @@ public class FxmlHelper {
 	 *            {@link #VIEW_PREFIX} in the same package of this class)
 	 * @param titleKey
 	 *            the message key to be used for the stage
+	 * @param <C>
+	 *            Controller type
 	 * @return the created stage or null, of the loading the FXML failed
 	 */
-	public static <T> Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey) {
+	public static Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey) {
 		return loadFxmlStage(app, view, titleKey, Object.class, null);
 	}
 
@@ -60,8 +104,8 @@ public class FxmlHelper {
 	 *            loaded
 	 * @return the created stage or null, of the loading the FXML failed
 	 */
-	public static <T> Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey, Class<T> controllerClass,
-			StageHandler<T> handler) {
+	public static <C> Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey, Class<C> controllerClass,
+			StageHandler<C> handler) {
 		ResourceBundle bundle = app.getBundle();
 
 		FXMLLoader loader = new FXMLLoader();
@@ -86,9 +130,9 @@ public class FxmlHelper {
 		Stage stage = new Stage();
 		stage.setTitle(bundle.getString(titleKey));
 		stage.setScene(new Scene(viewParent));
-		
+
 		// Give the controller access to the main app.
-		T controller = loader.getController();
+		C controller = loader.getController();
 		if (controller instanceof AbstractController) {
 			AbstractController cntrlr = (AbstractController) controller;
 			cntrlr.setApp(app);
@@ -103,9 +147,16 @@ public class FxmlHelper {
 	}
 
 	@FunctionalInterface
-	public static interface StageHandler<T> {
+	public static interface StageHandler<C> {
 
-		public void handleStage(Stage stage, T controller, ResourceBundle bundle);
+		public void handleStage(Stage stage, C controller, ResourceBundle bundle);
+
+	}
+
+	@FunctionalInterface
+	public static interface InnerDocumentHandler<C> {
+
+		public void handleDocument(C controller, ResourceBundle bundle);
 
 	}
 

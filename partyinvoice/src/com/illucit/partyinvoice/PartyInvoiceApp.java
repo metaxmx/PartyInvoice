@@ -1,5 +1,6 @@
 package com.illucit.partyinvoice;
 
+import static com.illucit.partyinvoice.FxmlHelper.loadFxml;
 import static com.illucit.partyinvoice.FxmlHelper.loadFxmlStage;
 import static com.illucit.partyinvoice.LogSetup.setupLogging;
 import static com.illucit.partyinvoice.XmlIO.loadFromFile;
@@ -7,17 +8,15 @@ import static com.illucit.partyinvoice.XmlIO.saveToFile;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -28,8 +27,8 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.illucit.partyinvoice.data.Operation;
 import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
-import com.illucit.partyinvoice.view.MainController;
 import com.illucit.partyinvoice.view.RootController;
 import com.illucit.partyinvoice.xmldata.XmlProject;
 
@@ -41,11 +40,18 @@ import com.illucit.partyinvoice.xmldata.XmlProject;
  */
 public class PartyInvoiceApp extends Application {
 
+	private enum DisplayedView {
+		Welcome, Persons
+	}
+
 	private static final String BUNDLE_NAME = "partyinvoice";
 
+	public static final String VIEW_ROOT = "RootLayout.fxml";
+	public static final String VIEW_MAIN = "MainLayout.fxml";
 	public static final String VIEW_MESSAGE = "MessageView.fxml";
 	public static final String VIEW_SAVECONFIRM = "SaveConfirmView.fxml";
 	public static final String VIEW_ABOUT = "AboutView.fxml";
+	public static final String VIEW_WELCOME = "WelcomeView.fxml";
 
 	private File userSettingsDir;
 
@@ -58,7 +64,11 @@ public class PartyInvoiceApp extends Application {
 
 	private BorderPane rootLayout;
 
+	private RootController rootController;
+
 	private Dialogs dialogs;
+
+	private DisplayedView view = DisplayedView.Welcome;
 
 	private ImmutableProjectHolder projectHolder;
 
@@ -129,6 +139,8 @@ public class PartyInvoiceApp extends Application {
 
 		initUi();
 
+		updateProjectAfterSourceChange();
+
 		primaryStage.show();
 	}
 
@@ -151,12 +163,27 @@ public class PartyInvoiceApp extends Application {
 	 * Initialize UI.
 	 */
 	private void initUi() {
-		initRootLayout();
-		showMainView();
+		rootLayout = loadFxml(this, VIEW_ROOT, RootController.class, (controller, bundle) -> {
+			rootController = controller;
+		});
+
+		loadInnerView();
 
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(rootLayout);
 		primaryStage.setScene(scene);
+	}
+
+	private void loadInnerView() {
+		switch (view) {
+		case Welcome:
+			Parent welcome = loadFxml(this, VIEW_WELCOME);
+			rootController.updateRightSide(welcome);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 	/**
@@ -196,48 +223,6 @@ public class PartyInvoiceApp extends Application {
 	 */
 	public boolean isChanged() {
 		return changed;
-	}
-
-	/**
-	 * Initializes the root layout.
-	 */
-	public void initRootLayout() {
-		try {
-			// Load root layout from fxml file.
-			FXMLLoader loader = new FXMLLoader();
-			loader.setResources(bundle);
-			loader.setLocation(PartyInvoiceApp.class.getResource("view/RootLayout.fxml"));
-			rootLayout = loader.load();
-
-			// Give the controller access to the main app.
-			RootController controller = loader.getController();
-			controller.setApp(this);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Shows the main view.
-	 */
-	public void showMainView() {
-		try {
-			// Load Main View
-			FXMLLoader loader = new FXMLLoader();
-			loader.setResources(bundle);
-			loader.setLocation(PartyInvoiceApp.class.getResource("view/MainView.fxml"));
-			AnchorPane personOverview = loader.load();
-
-			// Set person overview into the center of root layout.
-			rootLayout.setCenter(personOverview);
-
-			// Give the controller access to the main app.
-			MainController controller = loader.getController();
-			controller.setApp(this);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -288,6 +273,8 @@ public class PartyInvoiceApp extends Application {
 
 	private void updateProjectAfterSourceChange() {
 		// TODO: Update Lists etc.
+
+		updateUndoRedo();
 	}
 
 	/**
@@ -382,6 +369,26 @@ public class PartyInvoiceApp extends Application {
 			dialogs.showMessage("ui.message.errorsave.title", "ui.message.errorsave.text");
 		}
 		return false;
+	}
+
+	public void performOperation(Operation operation) {
+		this.projectHolder = projectHolder.operate(operation);
+		updateUndoRedo();
+	}
+
+	public void undo() {
+		this.projectHolder = projectHolder.undo();
+		updateUndoRedo();
+	}
+
+	public void redo() {
+		this.projectHolder = projectHolder.redo();
+		updateUndoRedo();
+	}
+
+	private void updateUndoRedo() {
+		rootController.setUndoEnabled(projectHolder.hasUndoStep());
+		rootController.setRedoEnabled(projectHolder.hasRedoStep());
 	}
 
 }

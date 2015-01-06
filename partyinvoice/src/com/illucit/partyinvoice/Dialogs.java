@@ -29,7 +29,7 @@ public class Dialogs {
 	private final PartyInvoiceApp app;
 
 	/**
-	 * Cerate dialogs helper.
+	 * Create dialogs helper.
 	 * 
 	 * @param app
 	 *            party invoice app
