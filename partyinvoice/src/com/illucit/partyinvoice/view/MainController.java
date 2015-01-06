@@ -76,7 +76,7 @@ public class MainController extends AbstractController {
 	@Override
 	public void setApp(PartyInvoiceApp app) {
 		super.setApp(app);
-		personList.setItems(app.getPersonData());
+		//personList.setItems(app.getPersonData());
 	}
 
 	public void updateRightSide(Node rightside) {

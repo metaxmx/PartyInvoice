@@ -28,10 +28,24 @@ public class Dialogs {
 
 	private final PartyInvoiceApp app;
 
+	/**
+	 * Cerate dialogs helper.
+	 * 
+	 * @param app
+	 *            party invoice app
+	 */
 	public Dialogs(PartyInvoiceApp app) {
 		this.app = app;
 	}
 
+	/**
+	 * Show message dialog.
+	 * 
+	 * @param messageTitleKey
+	 *            i18n key to show as title
+	 * @param messageKey
+	 *            i18n key to show as message
+	 */
 	public void showMessage(String messageTitleKey, String messageKey) {
 		Stage messageStage = loadFxmlStage(app, VIEW_MESSAGE, messageTitleKey, MessageController.class, (stage,
 				controller, bundle) -> {
@@ -49,6 +63,17 @@ public class Dialogs {
 		showModalDialog(messageStage);
 	}
 
+	/**
+	 * Show the dialog "You have unsaved changes ..." if there are unfaved
+	 * changes in the main window. The given callback is executed, when either
+	 * there is nothing to save, or when the user chooses to discard the changes
+	 * or when the user successfull saves the changes. The callback is not
+	 * executed when either the uses chooses to discard the changes or when the
+	 * saving as new file is cancelled.
+	 * 
+	 * @param callback
+	 *            callback function
+	 */
 	public void saveConfirm(Runnable callback) {
 		if (!app.isChanged()) {
 			// No confirmation needed
@@ -92,7 +117,7 @@ public class Dialogs {
 	 * @param stage
 	 *            stage to show
 	 */
-	private void showModalDialog(Stage stage) {
+	public void showModalDialog(Stage stage) {
 		stage.setResizable(false);
 		stage.initModality(Modality.WINDOW_MODAL);
 		stage.initOwner(app.getPrimaryStage());

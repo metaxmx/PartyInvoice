@@ -1,5 +1,6 @@
 package com.illucit.partyinvoice;
 
+import static com.illucit.partyinvoice.FxmlHelper.loadFxmlStage;
 import static com.illucit.partyinvoice.LogSetup.setupLogging;
 import static com.illucit.partyinvoice.XmlIO.loadFromFile;
 import static com.illucit.partyinvoice.XmlIO.saveToFile;
@@ -13,15 +14,12 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -30,11 +28,9 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.illucit.partyinvoice.model.PersonModel;
-import com.illucit.partyinvoice.view.AboutController;
+import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
 import com.illucit.partyinvoice.view.MainController;
 import com.illucit.partyinvoice.view.RootController;
-import com.illucit.partyinvoice.xmldata.XmlPerson;
 import com.illucit.partyinvoice.xmldata.XmlProject;
 
 /**
@@ -49,6 +45,7 @@ public class PartyInvoiceApp extends Application {
 
 	public static final String VIEW_MESSAGE = "MessageView.fxml";
 	public static final String VIEW_SAVECONFIRM = "SaveConfirmView.fxml";
+	public static final String VIEW_ABOUT = "AboutView.fxml";
 
 	private File userSettingsDir;
 
@@ -58,24 +55,29 @@ public class PartyInvoiceApp extends Application {
 	private ResourceBundle bundle;
 
 	private Stage primaryStage;
-	private Stage aboutStage;
 
 	private BorderPane rootLayout;
 
 	private Dialogs dialogs;
 
+	private ImmutableProjectHolder projectHolder;
+
 	private File xmlFile = null;
-
-	private XmlProject project;
-
 	private boolean changed = false;
 
-	private ObservableList<PersonModel> personData = FXCollections.observableArrayList();
-
+	/**
+	 * Start program.
+	 * 
+	 * @param args
+	 *            parameters from commandline
+	 */
 	public static void main(String[] args) {
 		PartyInvoiceApp.launch(PartyInvoiceApp.class, args);
 	}
 
+	/**
+	 * Initialize JavaFX application.
+	 */
 	@Override
 	public void init() throws Exception {
 		super.init();
@@ -97,6 +99,9 @@ public class PartyInvoiceApp extends Application {
 		dialogs = new Dialogs(this);
 	}
 
+	/**
+	 * Start main window.
+	 */
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
@@ -120,48 +125,43 @@ public class PartyInvoiceApp extends Application {
 			logger.info("PartyInvoice Stopped.");
 		});
 
-		initRootLayout();
+		this.projectHolder = new ImmutableProjectHolder();
 
-		// Show the scene containing the root layout.
-		Scene scene = new Scene(rootLayout);
-		primaryStage.setScene(scene);
+		initUi();
+
 		primaryStage.show();
-
-		this.project = new XmlProject();
-
-		XmlPerson p1 = new XmlPerson();
-		p1.setName("Hannes");
-		project.getPersons().add(p1);
-
-		XmlPerson p2 = new XmlPerson();
-		p2.setName("Udo");
-		project.getPersons().add(p2);
-
-		XmlPerson p3 = new XmlPerson();
-		p3.setName("Fritz");
-		p3.setDifference(-2345l);
-		project.getPersons().add(p3);
-
-		refreshPersonList();
-
-		showMainView();
 	}
 
+	/**
+	 * Change locale and reload UI.
+	 * 
+	 * @param locale
+	 *            target locale
+	 */
 	public void changeLocale(Locale locale) {
 
 		this.locale = locale;
 		System.out.println("Locale: " + locale);
 		loadResourceBundle();
 
-		initRootLayout();
-
-		showMainView();
-
-		Scene scene = new Scene(rootLayout);
-		primaryStage.setScene(scene);
-
+		initUi();
 	}
 
+	/**
+	 * Initialize UI.
+	 */
+	private void initUi() {
+		initRootLayout();
+		showMainView();
+
+		// Show the scene containing the root layout.
+		Scene scene = new Scene(rootLayout);
+		primaryStage.setScene(scene);
+	}
+
+	/**
+	 * Load resource bundle from current locale.
+	 */
 	private void loadResourceBundle() {
 		bundle = null;
 		try {
@@ -180,10 +180,20 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
+	/**
+	 * Get the resource bundle.
+	 * 
+	 * @return resource bundle
+	 */
 	public ResourceBundle getBundle() {
 		return bundle;
 	}
 
+	/**
+	 * Check if current project was changed since the last save.
+	 * 
+	 * @return save
+	 */
 	public boolean isChanged() {
 		return changed;
 	}
@@ -239,59 +249,37 @@ public class PartyInvoiceApp extends Application {
 		return primaryStage;
 	}
 
-	public void refreshPersonList() {
-		personData.clear();
-		project.getPersons().stream().sorted((p1, p2) -> p1.getName().compareTo(p2.getName())).map(PersonModel::new)
-				.forEach(personData::add);
-	}
-
+	/**
+	 * Quit program (and show "Save Confirmation" dialog is necessary).
+	 */
 	public void quit() {
 		primaryStage.fireEvent(new WindowEvent(primaryStage, WINDOW_CLOSE_REQUEST));
 	}
 
-	public ObservableList<PersonModel> getPersonData() {
-		return personData;
-	}
-
+	/**
+	 * Show about dialog.
+	 */
 	public void showAboutDialog() {
-		try {
-			// Load About View
-			FXMLLoader loader = new FXMLLoader();
-			loader.setResources(bundle);
-			loader.setLocation(PartyInvoiceApp.class.getResource("view/AboutView.fxml"));
-			AnchorPane aboutView = loader.load();
-
-			// Give the controller access to the main app.
-			AboutController controller = loader.getController();
-			controller.setApp(this);
-
-			aboutStage = new Stage();
-			aboutStage.setTitle(bundle.getString("ui.about.windowtitle"));
-			aboutStage.setScene(new Scene(aboutView));
-			aboutStage.setResizable(false);
-			aboutStage.initModality(Modality.WINDOW_MODAL);
-			aboutStage.initOwner(primaryStage);
-			aboutStage.show();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void closeAboutDialog() {
-		aboutStage.close();
+		Stage aboutStage = loadFxmlStage(this, VIEW_ABOUT, "ui.about.windowtitle");
+		dialogs.showModalDialog(aboutStage);
 	}
 
 	public void followIllucitHyperlink() {
 		getHostServices().showDocument("https://www.illucit.com");
 	}
 
+	/**
+	 * Perform Menu Operation "New Project".
+	 */
 	public void menuNewProject() {
 		dialogs.saveConfirm(() -> {
 			newProject();
 		});
 	}
 
+	/**
+	 * Perform Menu Operation "Load Project".
+	 */
 	public void menuLoadProject() {
 		dialogs.saveConfirm(() -> {
 			loadProject();
@@ -302,16 +290,22 @@ public class PartyInvoiceApp extends Application {
 		// TODO: Update Lists etc.
 	}
 
-	public void newProject() {
-		this.project = new XmlProject();
+	/**
+	 * Create new project.
+	 */
+	private void newProject() {
+		logger.info("Creating new project");
+
+		this.projectHolder = new ImmutableProjectHolder();
 		this.xmlFile = null;
 		this.changed = false;
-
-		logger.info("Creating new project");
 
 		updateProjectAfterSourceChange();
 	}
 
+	/**
+	 * Load project from file.
+	 */
 	private void loadProject() {
 
 		FileChooser fileChooser = new FileChooser();
@@ -325,7 +319,8 @@ public class PartyInvoiceApp extends Application {
 		logger.info("Loading project from file {}", loadFile.getPath());
 
 		try {
-			this.project = loadFromFile(loadFile);
+			XmlProject xmlProject = loadFromFile(loadFile);
+			this.projectHolder = new ImmutableProjectHolder(xmlProject);
 			this.xmlFile = loadFile;
 			this.changed = false;
 
@@ -337,6 +332,11 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
+	/**
+	 * Save project.
+	 * 
+	 * @return true, if was successful
+	 */
 	public boolean saveProject() {
 		if (this.xmlFile == null) {
 			return saveAsProject();
@@ -345,7 +345,7 @@ public class PartyInvoiceApp extends Application {
 		logger.info("Saving project to {}", this.xmlFile.getPath());
 
 		try {
-			saveToFile(this.xmlFile, project);
+			saveToFile(this.xmlFile, projectHolder.getProject().getXmlProject());
 			this.changed = false;
 			return true;
 		} catch (JAXBException e) {
@@ -355,6 +355,11 @@ public class PartyInvoiceApp extends Application {
 		return false;
 	}
 
+	/**
+	 * Save project as new file.
+	 * 
+	 * @return true, if was successful
+	 */
 	public boolean saveAsProject() {
 
 		FileChooser fileChooser = new FileChooser();
@@ -368,7 +373,7 @@ public class PartyInvoiceApp extends Application {
 		logger.info("Saving project to file {}", saveFile.getPath());
 
 		try {
-			saveToFile(saveFile, project);
+			saveToFile(saveFile, projectHolder.getProject().getXmlProject());
 			this.xmlFile = saveFile;
 			this.changed = false;
 			return true;

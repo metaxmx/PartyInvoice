@@ -83,15 +83,17 @@ public class FxmlHelper {
 			return null;
 		}
 
-		// Give the controller access to the main app.
-		T controller = loader.getController();
-		if (controller instanceof AbstractController) {
-			((AbstractController) controller).setApp(app);
-		}
-
 		Stage stage = new Stage();
 		stage.setTitle(bundle.getString(titleKey));
 		stage.setScene(new Scene(viewParent));
+		
+		// Give the controller access to the main app.
+		T controller = loader.getController();
+		if (controller instanceof AbstractController) {
+			AbstractController cntrlr = (AbstractController) controller;
+			cntrlr.setApp(app);
+			cntrlr.setStage(stage);
+		}
 
 		if (handler != null) {
 			handler.handleStage(stage, controller, bundle);

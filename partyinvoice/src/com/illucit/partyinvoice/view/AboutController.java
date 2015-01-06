@@ -11,7 +11,7 @@ import com.illucit.partyinvoice.AbstractController;
 public class AboutController extends AbstractController {
 
 	public void close() {
-		getApp().closeAboutDialog();
+		getStage().close();
 	}
 
 	public void followHyperlink() {

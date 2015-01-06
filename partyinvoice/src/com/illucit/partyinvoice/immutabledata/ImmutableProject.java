@@ -239,7 +239,7 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	 * 
 	 * @return mutable prject with JAXB annotations
 	 */
-	public XmlProject copyToProject() {
+	public XmlProject getXmlProject() {
 		XmlProject project = new XmlProject();
 		project.setTitle(getTitle());
 		for (ImmutablePerson person : getPersons()) {

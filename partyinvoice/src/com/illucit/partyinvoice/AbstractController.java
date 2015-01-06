@@ -1,5 +1,6 @@
 package com.illucit.partyinvoice;
 
+import javafx.stage.Stage;
 
 /**
  * Abstract class for all controllers to store the app.
@@ -10,6 +11,8 @@ package com.illucit.partyinvoice;
 public abstract class AbstractController {
 
 	private PartyInvoiceApp app;
+
+	private Stage stage;
 
 	/**
 	 * Set the app.
@@ -22,12 +25,31 @@ public abstract class AbstractController {
 	}
 
 	/**
+	 * Set the stage of the controller.
+	 * 
+	 * @param stage
+	 *            stage
+	 */
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+
+	/**
 	 * Get the app.
 	 * 
 	 * @return party invoice app
 	 */
 	public PartyInvoiceApp getApp() {
 		return app;
+	}
+
+	/**
+	 * Get the stage.
+	 * 
+	 * @return stage
+	 */
+	public Stage getStage() {
+		return stage;
 	}
 
 }

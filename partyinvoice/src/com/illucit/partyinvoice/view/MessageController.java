@@ -2,7 +2,8 @@ package com.illucit.partyinvoice.view;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.stage.Stage;
+
+import com.illucit.partyinvoice.AbstractController;
 
 /**
  * Controller for Message View.
@@ -10,23 +11,17 @@ import javafx.stage.Stage;
  * @author Christian Simon
  *
  */
-public class MessageController {
+public class MessageController extends AbstractController {
 
 	@FXML
 	private Label label;
-
-	private Stage stage;
 
 	public void setMessage(String msg) {
 		label.setText(msg);
 	}
 
-	public void setStage(Stage stage) {
-		this.stage = stage;
-	}
-
 	public void close() {
-		stage.close();
+		getStage().close();
 	}
 
 }
