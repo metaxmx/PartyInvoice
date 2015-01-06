@@ -1,9 +1,8 @@
 package com.illucit.partyinvoice.model;
 
-import javafx.beans.property.StringProperty;
-import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
+import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
 
-import com.illucit.partyinvoice.xmldata.XmlPerson;
+import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
 /**
  * Model for a person
@@ -13,9 +12,15 @@ import com.illucit.partyinvoice.xmldata.XmlPerson;
  */
 public class PersonModel {
 
-	private final XmlPerson person;
+	private final ImmutablePerson person;
 
-	private final StringProperty name;
+	private String name;
+
+	private String paid;
+
+	private String share;
+
+	private String difference;
 
 	/**
 	 * Weight for cost distribution. Costs are split by sum of weights, where
@@ -23,24 +28,45 @@ public class PersonModel {
 	 */
 	// private final FloatProperty calcWeight;
 
-	public PersonModel(XmlPerson person) {
+	public PersonModel(ImmutablePerson person) {
 		this.person = person;
-
-		try {
-
-			this.name = new JavaBeanStringPropertyBuilder().bean(person).name("name").build();
-
-		} catch (NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		}
+		this.name = person.getName();
+		this.paid = currencyToString(person.getPaid());
+		this.share = currencyToString(person.getShare());
+		this.difference = currencyToString(person.getDifference());
 	}
 
-	public StringProperty getName() {
+	public String getName() {
 		return name;
 	}
 
-	public XmlPerson getPerson() {
-		return person;
+	public String getPaid() {
+		return paid;
+	}
+
+	public String getShare() {
+		return share;
+	}
+
+	public String getDifference() {
+		return difference;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+		System.out.println("SetName: " + name);
+	}
+
+	public void setPaid(String paid) {
+		this.paid = paid;
+	}
+
+	public void setShare(String share) {
+		this.share = share;
+	}
+
+	public void setDifference(String difference) {
+		this.difference = difference;
 	}
 
 }

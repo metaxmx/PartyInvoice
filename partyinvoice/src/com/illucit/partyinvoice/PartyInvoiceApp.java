@@ -5,15 +5,21 @@ import static com.illucit.partyinvoice.FxmlHelper.loadFxmlStage;
 import static com.illucit.partyinvoice.LogSetup.setupLogging;
 import static com.illucit.partyinvoice.XmlIO.loadFromFile;
 import static com.illucit.partyinvoice.XmlIO.saveToFile;
+import static java.util.stream.Collectors.toList;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 
 import java.io.File;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableListBase;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -21,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Callback;
 
 import javax.xml.bind.JAXBException;
 
@@ -29,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import com.illucit.partyinvoice.data.Operation;
 import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
+import com.illucit.partyinvoice.immutabledata.operation.AddPersonOp;
+import com.illucit.partyinvoice.model.PersonModel;
 import com.illucit.partyinvoice.view.RootController;
 import com.illucit.partyinvoice.xmldata.XmlProject;
 
@@ -51,7 +60,9 @@ public class PartyInvoiceApp extends Application {
 	public static final String VIEW_MESSAGE = "MessageView.fxml";
 	public static final String VIEW_SAVECONFIRM = "SaveConfirmView.fxml";
 	public static final String VIEW_ABOUT = "AboutView.fxml";
+
 	public static final String VIEW_WELCOME = "WelcomeView.fxml";
+	public static final String VIEW_PERSONS = "PersonView.fxml";
 
 	private File userSettingsDir;
 
@@ -68,12 +79,14 @@ public class PartyInvoiceApp extends Application {
 
 	private Dialogs dialogs;
 
-	private DisplayedView view = DisplayedView.Welcome;
+	private DisplayedView view = DisplayedView.Persons;
 
 	private ImmutableProjectHolder projectHolder;
 
 	private File xmlFile = null;
 	private boolean changed = false;
+
+	private ObservableList<PersonModel> personList;
 
 	/**
 	 * Start program.
@@ -135,11 +148,13 @@ public class PartyInvoiceApp extends Application {
 			logger.info("PartyInvoice Stopped.");
 		});
 
-		this.projectHolder = new ImmutableProjectHolder();
+		personList = FXCollections.observableArrayList();
+
+		initializeProject();
 
 		initUi();
 
-		updateProjectAfterSourceChange();
+		refreshObserableData();
 
 		primaryStage.show();
 	}
@@ -179,6 +194,11 @@ public class PartyInvoiceApp extends Application {
 		case Welcome:
 			Parent welcome = loadFxml(this, VIEW_WELCOME);
 			rootController.updateRightSide(welcome);
+			break;
+
+		case Persons:
+			Parent persons = loadFxml(this, VIEW_PERSONS);
+			rootController.updateRightSide(persons);
 			break;
 
 		default:
@@ -234,6 +254,10 @@ public class PartyInvoiceApp extends Application {
 		return primaryStage;
 	}
 
+	public ObservableList<PersonModel> getPersonList() {
+		return personList;
+	}
+
 	/**
 	 * Quit program (and show "Save Confirmation" dialog is necessary).
 	 */
@@ -271,8 +295,9 @@ public class PartyInvoiceApp extends Application {
 		});
 	}
 
-	private void updateProjectAfterSourceChange() {
-		// TODO: Update Lists etc.
+	private void refreshObserableData() {
+		this.personList.setAll(this.projectHolder.getProject().getPersons().stream().map(PersonModel::new)
+				.collect(toList()));
 
 		updateUndoRedo();
 	}
@@ -282,12 +307,22 @@ public class PartyInvoiceApp extends Application {
 	 */
 	private void newProject() {
 		logger.info("Creating new project");
+		initializeProject();
+		refreshObserableData();
+	}
 
+	/**
+	 * Create data for a new project
+	 */
+	private void initializeProject() {
 		this.projectHolder = new ImmutableProjectHolder();
 		this.xmlFile = null;
 		this.changed = false;
 
-		updateProjectAfterSourceChange();
+		// DUmmy
+		performOperation(new AddPersonOp("Bernd"));
+		performOperation(new AddPersonOp("Alfred"));
+		performOperation(new AddPersonOp("Heinz"));
 	}
 
 	/**
@@ -311,7 +346,7 @@ public class PartyInvoiceApp extends Application {
 			this.xmlFile = loadFile;
 			this.changed = false;
 
-			updateProjectAfterSourceChange();
+			refreshObserableData();
 
 		} catch (JAXBException e) {
 			logger.error("Error loading project", e);
@@ -373,22 +408,24 @@ public class PartyInvoiceApp extends Application {
 
 	public void performOperation(Operation operation) {
 		this.projectHolder = projectHolder.operate(operation);
-		updateUndoRedo();
+		refreshObserableData();
 	}
 
 	public void undo() {
 		this.projectHolder = projectHolder.undo();
-		updateUndoRedo();
+		refreshObserableData();
 	}
 
 	public void redo() {
 		this.projectHolder = projectHolder.redo();
-		updateUndoRedo();
+		refreshObserableData();
 	}
 
 	private void updateUndoRedo() {
-		rootController.setUndoEnabled(projectHolder.hasUndoStep());
-		rootController.setRedoEnabled(projectHolder.hasRedoStep());
+		if (rootController != null) {
+			rootController.setUndoEnabled(projectHolder.hasUndoStep());
+			rootController.setRedoEnabled(projectHolder.hasRedoStep());
+		}
 	}
 
 }
