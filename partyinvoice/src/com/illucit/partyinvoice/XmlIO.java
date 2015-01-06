@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 
-import com.illucit.partyinvoice.xmldata.Project;
+import com.illucit.partyinvoice.xmldata.XmlProject;
 
 /**
  * Input/output helper for XML project files.
@@ -19,17 +19,17 @@ import com.illucit.partyinvoice.xmldata.Project;
  */
 public class XmlIO {
 
-	public static void saveToFile(File targetFile, Project project) throws JAXBException {
-		JAXBContext context = JAXBContext.newInstance(Project.class);
+	public static void saveToFile(File targetFile, XmlProject project) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(XmlProject.class);
 		Marshaller marshaller = context.createMarshaller();
 		marshaller.setProperty(JAXB_FORMATTED_OUTPUT, true);
 		marshaller.marshal(project, targetFile);
 	}
 
-	public static Project loadFromFile(File targetFile) throws JAXBException {
-		JAXBContext context = JAXBContext.newInstance(Project.class);
+	public static XmlProject loadFromFile(File targetFile) throws JAXBException {
+		JAXBContext context = JAXBContext.newInstance(XmlProject.class);
 		Unmarshaller unmarshaller = context.createUnmarshaller();
-		return (Project) unmarshaller.unmarshal(targetFile);
+		return (XmlProject) unmarshaller.unmarshal(targetFile);
 	}
 
 }

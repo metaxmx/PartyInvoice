@@ -1,6 +1,7 @@
 package com.illucit.partyinvoice.immutabledata;
 
-import com.illucit.partyinvoice.xmldata.Project;
+import com.illucit.partyinvoice.data.Operation;
+import com.illucit.partyinvoice.xmldata.XmlProject;
 
 public final class ImmutableProjectHolder extends
 		AbstractImmutableHolder<Operation, ImmutableProject, ImmutableProjectHolder> {
@@ -11,7 +12,7 @@ public final class ImmutableProjectHolder extends
 		super();
 	}
 
-	public ImmutableProjectHolder(Project project) {
+	public ImmutableProjectHolder(XmlProject project) {
 		super(() -> new ImmutableProject(project));
 	}
 

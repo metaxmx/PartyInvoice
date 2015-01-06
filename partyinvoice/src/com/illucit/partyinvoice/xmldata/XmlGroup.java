@@ -1,15 +1,14 @@
 package com.illucit.partyinvoice.xmldata;
 
-import static java.util.stream.Collectors.toList;
-
 import java.io.Serializable;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlTransient;
 
-public class Group implements Serializable {
+import com.illucit.partyinvoice.data.Group;
+
+public class XmlGroup implements Group, Serializable {
 
 	private static final long serialVersionUID = 709485074492889160L;
 
@@ -20,17 +19,6 @@ public class Group implements Serializable {
 	private String name;
 
 	private List<String> personNames;
-
-	/*
-	 * Transient Attributes
-	 */
-
-	@TransientValue
-	private Project project;
-
-	@CalculatedValue
-	@TransientValue
-	private List<Person> persons;
 
 	/*
 	 * Attribute Getters
@@ -57,19 +45,5 @@ public class Group implements Serializable {
 
 	public void setPersonNames(List<String> personNames) {
 		this.personNames = personNames;
-	}
-
-	/*
-	 * Utility Methods and Transient Getters / Setters
-	 */
-
-	@XmlTransient
-	public Project getProject() {
-		return project;
-	}
-
-	public void assign(Project project) {
-		this.project = project;
-		persons = personNames.stream().map(pn -> project.getPerson(pn)).filter(p -> p != null).collect(toList());
 	}
 }

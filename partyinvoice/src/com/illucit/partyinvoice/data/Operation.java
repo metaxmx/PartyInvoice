@@ -1,4 +1,4 @@
-package com.illucit.partyinvoice.immutabledata;
+package com.illucit.partyinvoice.data;
 
 import java.io.Serializable;
 

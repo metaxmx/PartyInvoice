@@ -3,6 +3,8 @@ package com.illucit.partyinvoice.immutabledata;
 import java.io.Serializable;
 import java.util.function.Supplier;
 
+import com.illucit.partyinvoice.data.Mutation;
+
 public abstract class AbstractImmutableHolder<O extends Serializable, I extends Mutation<O, I>, H extends AbstractImmutableHolder<O, I, H>>
 		implements Serializable {
 
@@ -125,7 +127,7 @@ public abstract class AbstractImmutableHolder<O extends Serializable, I extends 
 	protected abstract H castSelf();
 
 	protected abstract H unwrap(H newRedoStep);
-	
+
 	public abstract H operate(O operation);
 
 }

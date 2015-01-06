@@ -11,8 +11,6 @@ public class ImmutablePerson implements Serializable {
 	/*
 	 * --- Members ---
 	 */
-	
-	private final ImmutableProject project;
 
 	private final String name;
 
@@ -22,16 +20,9 @@ public class ImmutablePerson implements Serializable {
 	@CalculatedValue
 	private final Long share;
 
-	@CalculatedValue
-	private final Long difference;
-	
 	/*
 	 * --- Getters ---
 	 */
-	
-	public ImmutableProject getProject() {
-		return project;
-	}
 
 	public String getName() {
 		return name;
@@ -45,20 +36,25 @@ public class ImmutablePerson implements Serializable {
 		return share;
 	}
 
-	public Long getDifference() {
-		return difference;
-	}
-	
 	/*
 	 * --- Constructors ---
 	 */
 
-	public ImmutablePerson(ImmutableProject project, String name, Long paid, Long share, Long difference) {
-		this.project = project;
+	public ImmutablePerson(String name, Long paid, Long share) {
 		this.name = name;
 		this.paid = paid;
 		this.share = share;
-		this.difference = difference;
+	}
+
+	/*
+	 * --- Utility Methods ---
+	 */
+
+	public long getDifference() {
+		if (getPaid() == null || getShare() == null) {
+			return 0l;
+		}
+		return getShare() - getPaid();
 	}
 
 	/*
@@ -69,7 +65,6 @@ public class ImmutablePerson implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((difference == null) ? 0 : difference.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((paid == null) ? 0 : paid.hashCode());
 		result = prime * result + ((share == null) ? 0 : share.hashCode());
@@ -88,13 +83,6 @@ public class ImmutablePerson implements Serializable {
 			return false;
 		}
 		ImmutablePerson other = (ImmutablePerson) obj;
-		if (difference == null) {
-			if (other.difference != null) {
-				return false;
-			}
-		} else if (!difference.equals(other.difference)) {
-			return false;
-		}
 		if (name == null) {
 			if (other.name != null) {
 				return false;

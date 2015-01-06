@@ -55,7 +55,8 @@ public class MainController extends AbstractController {
 					if (item.getPerson().getDifference() == null) {
 						setText(item.getPerson().getName());
 					} else {
-						setText(item.getPerson().getName() + ": " + item.getPerson().getDifferenceStr());
+						setText(item.getPerson().getName());
+						//setText(item.getPerson().getName() + ": " + item.getPerson().getDifferenceStr());
 					}
 				}
 			}

@@ -3,7 +3,7 @@ package com.illucit.partyinvoice.model;
 import javafx.beans.property.StringProperty;
 import javafx.beans.property.adapter.JavaBeanStringPropertyBuilder;
 
-import com.illucit.partyinvoice.xmldata.Person;
+import com.illucit.partyinvoice.xmldata.XmlPerson;
 
 /**
  * Model for a person
@@ -13,7 +13,7 @@ import com.illucit.partyinvoice.xmldata.Person;
  */
 public class PersonModel {
 
-	private final Person person;
+	private final XmlPerson person;
 
 	private final StringProperty name;
 
@@ -23,7 +23,7 @@ public class PersonModel {
 	 */
 	// private final FloatProperty calcWeight;
 
-	public PersonModel(Person person) {
+	public PersonModel(XmlPerson person) {
 		this.person = person;
 
 		try {
@@ -39,7 +39,7 @@ public class PersonModel {
 		return name;
 	}
 
-	public Person getPerson() {
+	public XmlPerson getPerson() {
 		return person;
 	}
 

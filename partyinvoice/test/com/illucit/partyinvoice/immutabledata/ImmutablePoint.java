@@ -1,5 +1,7 @@
 package com.illucit.partyinvoice.immutabledata;
 
+import com.illucit.partyinvoice.data.Mutation;
+
 public class ImmutablePoint implements Mutation<TranslationOperation, ImmutablePoint> {
 
 	private static final long serialVersionUID = 8248503763887144467L;

@@ -35,6 +35,9 @@
 		<!-- Define the version of Loggers -->
 		<version.slf4j>1.7.2</version.slf4j>
 		<version.log4j>1.2.17</version.log4j>
+		
+		<!-- Guava -->
+		<version.guava>18.0</version.guava>
 	</properties>
 
 	<dependencies>
@@ -66,6 +69,12 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${version.log4j}</version>
+		</dependency>
+		<!-- Google Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${version.guava}</version>
 		</dependency>
 	</dependencies>
 

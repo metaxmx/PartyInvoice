@@ -1,12 +1,8 @@
 package com.illucit.partyinvoice.xmldata;
 
-import static java.util.stream.Collectors.toMap;
-
 import java.io.Serializable;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -14,7 +10,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "PartyInvoiceProject")
-public class Project implements Serializable {
+public class XmlProject implements Serializable {
 
 	private static final long serialVersionUID = -1878999984953234565L;
 
@@ -26,17 +22,11 @@ public class Project implements Serializable {
 
 	private String title;
 
-	private List<Person> persons = new LinkedList<>();
+	private List<XmlPerson> persons = new LinkedList<>();
 
-	private List<Group> groups = new LinkedList<>();
+	private List<XmlGroup> groups = new LinkedList<>();
 
-	/*
-	 * Transient Attributes
-	 */
-
-	private Map<String, Person> personsByName = new Hashtable<>();
-
-	private Map<String, Group> groupsByName = new Hashtable<>();
+	private List<XmlInvoice> invoices = new LinkedList<>();
 
 	/*
 	 * Attribute Getters
@@ -54,14 +44,20 @@ public class Project implements Serializable {
 
 	@XmlElementWrapper(name = "Persons")
 	@XmlElement(name = "Person")
-	public List<Person> getPersons() {
+	public List<XmlPerson> getPersons() {
 		return persons;
 	}
 
 	@XmlElementWrapper(name = "Groups")
 	@XmlElement(name = "Group")
-	public List<Group> getGroups() {
+	public List<XmlGroup> getGroups() {
 		return groups;
+	}
+
+	@XmlElementWrapper(name = "Invoices")
+	@XmlElement(name = "Invoice")
+	public List<XmlInvoice> getInvoices() {
+		return invoices;
 	}
 
 	/*
@@ -76,31 +72,16 @@ public class Project implements Serializable {
 		this.title = title;
 	}
 
-	public void setPersons(List<Person> persons) {
+	public void setPersons(List<XmlPerson> persons) {
 		this.persons = persons;
 	}
 
-	/*
-	 * Utility Methods and Transient Getters / Setters
-	 */
-
-	public Person getPerson(String name) {
-		return personsByName.get(name);
+	public void setGroups(List<XmlGroup> groups) {
+		this.groups = groups;
 	}
 
-	public Group getGroup(String name) {
-		return groupsByName.get(name);
-	}
-
-	public void calculate() {
-		// TODO:
-	}
-
-	public void assign() {
-		personsByName = persons.stream().filter(p -> p.getName() != null).collect(toMap(p -> p.getName(), p -> p));
-		groupsByName = groups.stream().filter(g -> g.getName() != null).collect(toMap(g -> g.getName(), g -> g));
-		persons.forEach(p -> p.assign(this));
-		groups.forEach(g -> g.assign(this));
+	public void setInvoices(List<XmlInvoice> invoices) {
+		this.invoices = invoices;
 	}
 
 }

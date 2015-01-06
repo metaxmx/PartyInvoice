@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javafx.application.Application;
-import javafx.beans.property.ObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -35,8 +34,8 @@ import com.illucit.partyinvoice.model.PersonModel;
 import com.illucit.partyinvoice.view.AboutController;
 import com.illucit.partyinvoice.view.MainController;
 import com.illucit.partyinvoice.view.RootController;
-import com.illucit.partyinvoice.xmldata.Person;
-import com.illucit.partyinvoice.xmldata.Project;
+import com.illucit.partyinvoice.xmldata.XmlPerson;
+import com.illucit.partyinvoice.xmldata.XmlProject;
 
 /**
  * Main Application class for Party Invoice.
@@ -66,12 +65,10 @@ public class PartyInvoiceApp extends Application {
 	private Dialogs dialogs;
 
 	private File xmlFile = null;
-	
-	private Project project;
-	
-	private boolean changed = true;
-	
-	private ObjectProperty<Project> projectProperty;
+
+	private XmlProject project;
+
+	private boolean changed = false;
 
 	private ObservableList<PersonModel> personData = FXCollections.observableArrayList();
 
@@ -130,23 +127,20 @@ public class PartyInvoiceApp extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		this.project = new Project();
+		this.project = new XmlProject();
 
-		Person p1 = new Person();
+		XmlPerson p1 = new XmlPerson();
 		p1.setName("Hannes");
 		project.getPersons().add(p1);
 
-		Person p2 = new Person();
+		XmlPerson p2 = new XmlPerson();
 		p2.setName("Udo");
 		project.getPersons().add(p2);
 
-		Person p3 = new Person();
+		XmlPerson p3 = new XmlPerson();
 		p3.setName("Fritz");
 		p3.setDifference(-2345l);
 		project.getPersons().add(p3);
-
-		project.assign();
-		project.calculate();
 
 		refreshPersonList();
 
@@ -192,10 +186,6 @@ public class PartyInvoiceApp extends Application {
 
 	public boolean isChanged() {
 		return changed;
-	}
-	
-	public ObjectProperty<Project> getProjectProperty() {
-		return projectProperty;
 	}
 
 	/**
@@ -313,7 +303,7 @@ public class PartyInvoiceApp extends Application {
 	}
 
 	public void newProject() {
-		this.project = new Project();
+		this.project = new XmlProject();
 		this.xmlFile = null;
 		this.changed = false;
 
