@@ -2,18 +2,16 @@ package com.illucit.partyinvoice.view;
 
 import java.util.Locale;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 
 import com.illucit.partyinvoice.AbstractController;
+import com.illucit.partyinvoice.PartyInvoiceApp.SelectedView;
 import com.illucit.partyinvoice.model.PersonModel;
 
 /**
@@ -23,10 +21,6 @@ import com.illucit.partyinvoice.model.PersonModel;
  *
  */
 public class RootController extends AbstractController {
-
-	public enum SelectedAccordionTab {
-		Welcome, Persons, Invoices, Result
-	}
 
 	@FXML
 	private MenuItem menuUndo;
@@ -38,38 +32,22 @@ public class RootController extends AbstractController {
 	private BorderPane rightSidePane;
 
 	@FXML
-	private Accordion leftSideAccodion;
+	private Hyperlink welcomeLink;
 
 	@FXML
-	private TitledPane personsAccordionPane;
+	private Hyperlink personsLink;
 
 	@FXML
-	private TitledPane invoicesAccordionPane;
+	private Hyperlink invoiceLink;
 
 	@FXML
-	private TitledPane resultAccordionPane;
-
-	@FXML
-	private TitledPane welcomeAccordionPane;
+	private Hyperlink resultLink;
 
 	@FXML
 	private ListView<PersonModel> personList;
 
 	@FXML
 	private Button addPersonButton;
-
-	@FXML
-	public void initialize() {
-		leftSideAccodion.expandedPaneProperty().addListener(new ChangeListener<TitledPane>() {
-			public void changed(ObservableValue<? extends TitledPane> ov, TitledPane old_val, TitledPane new_val) {
-				if (new_val != null) {
-					System.out.println(">>> " + new_val.getText());
-				} else {
-					System.out.println(">>> Empty");
-				}
-			}
-		});
-	}
 
 	public void changeLocaleGerman() {
 		getApp().changeLocale(Locale.GERMAN);
@@ -111,16 +89,20 @@ public class RootController extends AbstractController {
 		getApp().redo();
 	}
 
+	public void showWelcome() {
+		getApp().selectView(SelectedView.Welcome);
+	}
+
 	public void editPersons() {
-		System.out.println("Persons");
+		getApp().selectView(SelectedView.Persons);
 	}
 
 	public void editInvoices() {
-		System.out.println("Invoices");
+		getApp().selectView(SelectedView.Invoices);
 	}
 
 	public void editResult() {
-		System.out.println("Result");
+		getApp().selectView(SelectedView.Result);
 	}
 
 	public void setUndoEnabled(boolean enabled) {
@@ -133,6 +115,41 @@ public class RootController extends AbstractController {
 
 	public void updateRightSide(Node rightside) {
 		rightSidePane.setCenter(rightside);
+	}
+
+	public void highlightLink() {
+		switch (getApp().getView()) {
+		case Welcome:
+			welcomeLink.setVisited(true);
+			personsLink.setVisited(false);
+			invoiceLink.setVisited(false);
+			resultLink.setVisited(false);
+			break;
+
+		case Persons:
+			welcomeLink.setVisited(false);
+			personsLink.setVisited(true);
+			invoiceLink.setVisited(false);
+			resultLink.setVisited(false);
+			break;
+
+		case Invoices:
+			welcomeLink.setVisited(false);
+			personsLink.setVisited(false);
+			invoiceLink.setVisited(true);
+			resultLink.setVisited(false);
+			break;
+
+		case Result:
+			welcomeLink.setVisited(false);
+			personsLink.setVisited(false);
+			invoiceLink.setVisited(false);
+			resultLink.setVisited(true);
+			break;
+
+		default:
+			break;
+		}
 	}
 
 }

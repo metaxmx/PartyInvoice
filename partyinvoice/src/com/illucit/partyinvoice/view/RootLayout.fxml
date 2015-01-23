@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.input.*?>
 <?import javafx.scene.control.*?>
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.BorderPane?>
+<?scenebuilder-stylesheet party.css?>
 
-<BorderPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.illucit.partyinvoice.view.RootController">
+<BorderPane prefHeight="600.0" prefWidth="800.0" stylesheets="@party.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.illucit.partyinvoice.view.RootController">
    <top>
       <VBox>
          <children>
@@ -90,11 +93,6 @@
                 </Menu>
               </menus>
             </MenuBar>
-            <ToolBar prefHeight="40.0" prefWidth="200.0">
-              <items>
-                <Button mnemonicParsing="false" text="Button" />
-              </items>
-            </ToolBar>
          </children>
       </VBox>
    </top>
@@ -103,33 +101,21 @@
    <children>
       <SplitPane dividerPositions="0.3" layoutX="314.0" layoutY="76.0" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <items>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-               <children>
-                  <Accordion fx:id="leftSideAccodion" layoutX="17.0" layoutY="163.0" prefHeight="598.0" prefWidth="235.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                    <panes>
-                      <TitledPane animated="false" text="%ui.tab.persons">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                                 <children>
-                                    <Button fx:id="addPersonButton" layoutX="91.0" layoutY="-12.0" mnemonicParsing="false" prefHeight="25.0" text="%ui.persons.btn.add" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-                                    <ListView fx:id="personList" layoutX="40.0" layoutY="131.0" prefHeight="522.0" prefWidth="234.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="35.0" />
-                                 </children></AnchorPane>
-                        </content>
-                      </TitledPane>
-                      <TitledPane animated="false" expanded="false" text="%ui.tab.invoices">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                        </content>
-                      </TitledPane>
-                      <TitledPane animated="false" expanded="false" text="%ui.tab.result">
-                        <content>
-                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                        </content>
-                      </TitledPane>
-                    </panes>
-                  </Accordion>
-               </children>
-            </AnchorPane>
+                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0">
+                     <children>
+                        <Hyperlink fx:id="welcomeLink" maxWidth="1.7976931348623157E308" onAction="#showWelcome" text="%ui.tab.welcome" VBox.vgrow="ALWAYS">
+                           <opaqueInsets>
+                              <Insets />
+                           </opaqueInsets>
+                        </Hyperlink>
+                        <Hyperlink fx:id="personsLink" maxWidth="1.7976931348623157E308" onAction="#editPersons" text="%ui.tab.persons" />
+                        <Hyperlink fx:id="invoiceLink" maxWidth="1.7976931348623157E308" onAction="#editInvoices" text="%ui.tab.invoices" />
+                        <Hyperlink fx:id="resultLink" maxWidth="1.7976931348623157E308" onAction="#editResult" text="%ui.tab.result" />
+                     </children>
+                     <padding>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </padding>
+                  </VBox>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                <children>
                   <BorderPane fx:id="rightSidePane" prefHeight="598.0" prefWidth="556.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />

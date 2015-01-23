@@ -12,8 +12,6 @@ import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
  */
 public class PersonModel {
 
-	private final ImmutablePerson person;
-
 	private String name;
 
 	private String paid;
@@ -22,14 +20,7 @@ public class PersonModel {
 
 	private String difference;
 
-	/**
-	 * Weight for cost distribution. Costs are split by sum of weights, where
-	 * every person gets a share in the amout of his/her weight.
-	 */
-	// private final FloatProperty calcWeight;
-
 	public PersonModel(ImmutablePerson person) {
-		this.person = person;
 		this.name = person.getName();
 		this.paid = currencyToString(person.getPaid());
 		this.share = currencyToString(person.getShare());
@@ -54,7 +45,6 @@ public class PersonModel {
 
 	public void setName(String name) {
 		this.name = name;
-		System.out.println("SetName: " + name);
 	}
 
 	public void setPaid(String paid) {

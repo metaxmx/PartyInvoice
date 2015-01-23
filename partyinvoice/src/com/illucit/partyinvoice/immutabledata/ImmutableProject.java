@@ -13,7 +13,10 @@ import com.illucit.partyinvoice.data.Invoice;
 import com.illucit.partyinvoice.data.Item;
 import com.illucit.partyinvoice.data.Mutation;
 import com.illucit.partyinvoice.data.Operation;
+import com.illucit.partyinvoice.immutabledata.operation.AddInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddPersonOp;
+import com.illucit.partyinvoice.immutabledata.operation.ChangeInvoiceOp;
+import com.illucit.partyinvoice.immutabledata.operation.DelInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelPersonOp;
 import com.illucit.partyinvoice.immutabledata.operation.RenamePersonOp;
 import com.illucit.partyinvoice.xmldata.XmlGroup;
@@ -216,7 +219,7 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		return project.getGroups();
 	}
 
-	private static List<? extends Group> getGroupList(ImmutableProject project, Operation operation) {
+	private static List<ImmutableGroup> getGroupList(ImmutableProject project, Operation operation) {
 		// TODO: Handle operations
 		return project.getGroups();
 	}
@@ -225,9 +228,34 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		return project.getInvoices();
 	}
 
-	private static List<? extends Invoice> getInvoiceList(ImmutableProject project, Operation operation) {
-		// TODO: Handle operations
-		return project.getInvoices();
+	private static List<ImmutableInvoice> getInvoiceList(ImmutableProject project, Operation operation) {
+		List<ImmutableInvoice> invoices = new LinkedList<>();
+		for (ImmutableInvoice invoice : project.getInvoices()) {
+			String title = invoice.getTitle();
+			if (operation instanceof DelInvoiceOp) {
+				DelInvoiceOp op = (DelInvoiceOp) operation;
+				if (op.getTitle().equals(title)) {
+					continue;
+				}
+			}
+			if (operation instanceof ChangeInvoiceOp) {
+				ChangeInvoiceOp op = (ChangeInvoiceOp) operation;
+				if (op.getOldTitle().equals(title)) {
+					invoices.add(new ImmutableInvoice(op.getNewTitle(), op.getPaidBy(), invoice.getItems()));
+					continue;
+				}
+			}
+			invoices.add(new ImmutableInvoice(invoice.getTitle(), invoice.getPaidBy(), getItemList(invoice, operation)));
+		}
+		if (operation instanceof AddInvoiceOp) {
+			AddInvoiceOp op = (AddInvoiceOp) operation;
+			invoices.add(new ImmutableInvoice(op.getTitle(), op.getPaidBy(), ImmutableList.of()));
+		}
+		return invoices;
+	}
+	
+	private static List<ImmutableItem> getItemList(ImmutableInvoice invoice, Operation operation) {
+		return invoice.getItems();
 	}
 
 	public ImmutableProject mutate(Operation operation) {

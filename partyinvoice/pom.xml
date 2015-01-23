@@ -87,6 +87,7 @@
 				<directory>src</directory>
 				<includes>
 					<include>**/*.fxml</include>
+					<include>**/*.css</include>
 				</includes>
 			</resource>
 			<resource>

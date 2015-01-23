@@ -11,15 +11,12 @@ import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 import java.io.File;
 import java.util.Locale;
 import java.util.MissingResourceException;
-import java.util.Observable;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableListBase;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -27,7 +24,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import javafx.util.Callback;
 
 import javax.xml.bind.JAXBException;
 
@@ -35,8 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.illucit.partyinvoice.data.Operation;
+import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
+import com.illucit.partyinvoice.immutabledata.operation.AddInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddPersonOp;
+import com.illucit.partyinvoice.immutabledata.operation.DelInvoiceOp;
+import com.illucit.partyinvoice.immutabledata.operation.DelPersonOp;
+import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.PersonModel;
 import com.illucit.partyinvoice.view.RootController;
 import com.illucit.partyinvoice.xmldata.XmlProject;
@@ -49,8 +50,8 @@ import com.illucit.partyinvoice.xmldata.XmlProject;
  */
 public class PartyInvoiceApp extends Application {
 
-	private enum DisplayedView {
-		Welcome, Persons
+	public enum SelectedView {
+		Welcome, Persons, Invoices, Result
 	}
 
 	private static final String BUNDLE_NAME = "partyinvoice";
@@ -63,6 +64,7 @@ public class PartyInvoiceApp extends Application {
 
 	public static final String VIEW_WELCOME = "WelcomeView.fxml";
 	public static final String VIEW_PERSONS = "PersonView.fxml";
+	public static final String VIEW_INVOICES = "InvoicesView.fxml";
 
 	private File userSettingsDir;
 
@@ -79,7 +81,7 @@ public class PartyInvoiceApp extends Application {
 
 	private Dialogs dialogs;
 
-	private DisplayedView view = DisplayedView.Persons;
+	private SelectedView view = SelectedView.Welcome;
 
 	private ImmutableProjectHolder projectHolder;
 
@@ -87,6 +89,10 @@ public class PartyInvoiceApp extends Application {
 	private boolean changed = false;
 
 	private ObservableList<PersonModel> personList;
+
+	private ObservableList<String> personNameList;
+
+	private ObservableList<InvoiceModel> invoiceList;
 
 	/**
 	 * Start program.
@@ -149,6 +155,8 @@ public class PartyInvoiceApp extends Application {
 		});
 
 		personList = FXCollections.observableArrayList();
+		personNameList = FXCollections.observableArrayList();
+		invoiceList = FXCollections.observableArrayList();
 
 		initializeProject();
 
@@ -182,11 +190,16 @@ public class PartyInvoiceApp extends Application {
 			rootController = controller;
 		});
 
-		loadInnerView();
+		selectView(SelectedView.Welcome);
 
 		// Show the scene containing the root layout.
 		Scene scene = new Scene(rootLayout);
 		primaryStage.setScene(scene);
+	}
+
+	public void selectView(SelectedView view) {
+		this.view = view;
+		loadInnerView();
 	}
 
 	private void loadInnerView() {
@@ -201,9 +214,21 @@ public class PartyInvoiceApp extends Application {
 			rootController.updateRightSide(persons);
 			break;
 
+		case Invoices:
+			Parent invoices = loadFxml(this, VIEW_INVOICES);
+			rootController.updateRightSide(invoices);
+			break;
+
 		default:
 			break;
 		}
+		if (rootController != null) {
+			rootController.highlightLink();
+		}
+	}
+
+	public SelectedView getView() {
+		return view;
 	}
 
 	/**
@@ -258,6 +283,14 @@ public class PartyInvoiceApp extends Application {
 		return personList;
 	}
 
+	public ObservableList<String> getPersonNameList() {
+		return personNameList;
+	}
+
+	public ObservableList<InvoiceModel> getInvoiceList() {
+		return invoiceList;
+	}
+
 	/**
 	 * Quit program (and show "Save Confirmation" dialog is necessary).
 	 */
@@ -297,6 +330,10 @@ public class PartyInvoiceApp extends Application {
 
 	private void refreshObserableData() {
 		this.personList.setAll(this.projectHolder.getProject().getPersons().stream().map(PersonModel::new)
+				.collect(toList()));
+		this.personNameList.setAll(this.projectHolder.getProject().getPersons().stream().map(ImmutablePerson::getName)
+				.collect(toList()));
+		this.invoiceList.setAll(this.projectHolder.getProject().getInvoices().stream().map(InvoiceModel::new)
 				.collect(toList()));
 
 		updateUndoRedo();
@@ -426,6 +463,26 @@ public class PartyInvoiceApp extends Application {
 			rootController.setUndoEnabled(projectHolder.hasUndoStep());
 			rootController.setRedoEnabled(projectHolder.hasRedoStep());
 		}
+	}
+
+	/*
+	 * Operations
+	 */
+
+	public void addPerson(String name) {
+		performOperation(new AddPersonOp(name));
+	}
+
+	public void deletePerson(String name) {
+		performOperation(new DelPersonOp(name));
+	}
+
+	public void addInvoice(String title, String paidBy) {
+		performOperation(new AddInvoiceOp(title, paidBy));
+	}
+
+	public void deleteInvoice(String title) {
+		performOperation(new DelInvoiceOp(title));
 	}
 
 }
