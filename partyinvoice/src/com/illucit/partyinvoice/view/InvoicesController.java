@@ -15,6 +15,10 @@ import com.illucit.partyinvoice.model.InvoiceModel;
 
 public class InvoicesController extends AbstractController {
 
+	/*
+	 * Invoice
+	 */
+	
 	@FXML
 	private TableView<InvoiceModel> invoicesTable;
 
@@ -42,6 +46,13 @@ public class InvoicesController extends AbstractController {
 	@FXML
 	private Button deleteInvoiceButton;
 
+	/*
+	 * Item
+	 */
+	
+	@FXML
+	private TableView<Object> itemTable;
+	
 	@Override
 	public void setApp(PartyInvoiceApp app) {
 		super.setApp(app);

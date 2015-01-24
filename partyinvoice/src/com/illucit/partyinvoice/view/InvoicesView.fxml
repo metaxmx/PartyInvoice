@@ -32,10 +32,10 @@
             </GridPane>
             <TableView fx:id="invoicesTable" editable="true" layoutX="100.0" layoutY="100.0" prefHeight="600.0" prefWidth="600.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="100.0">
               <columns>
-                  <TableColumn fx:id="nameCol" maxWidth="-Infinity" minWidth="200.0" prefWidth="50000.0" text="%ui.persons.cols.name" />
-                <TableColumn fx:id="paidByCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.paid" />
-                <TableColumn fx:id="itemsCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.share" />
-                  <TableColumn fx:id="totalCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.difference" />
+                  <TableColumn fx:id="nameCol" maxWidth="-Infinity" minWidth="200.0" prefWidth="50000.0" text="%ui.invoices.invoice.cols.title" />
+                <TableColumn fx:id="paidByCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.invoices.invoice.cols.paidby" />
+                <TableColumn fx:id="itemsCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.invoices.invoice.cols.items" />
+                  <TableColumn fx:id="totalCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.invoices.invoice.cols.total" />
               </columns>
             </TableView>
          </children>
@@ -59,20 +59,20 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label text="Item title:" />
-                  <Label text="Quantity:" GridPane.rowIndex="1" />
-                  <Label text="Price:" GridPane.columnIndex="2" />
-                  <Label text="Total:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Label text="%ui.invoices.item.label.title" />
+                  <Label text="%ui.invoices.item.label.quantity" GridPane.rowIndex="1" />
+                  <Label text="%ui.invoices.item.label.price" GridPane.columnIndex="2" />
+                  <Label text="%ui.invoices.item.label.total" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                   <TextField GridPane.columnIndex="1" />
                   <TextField GridPane.columnIndex="3" />
                   <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField disable="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <Label text="Paid by:" GridPane.rowIndex="2" />
+                  <Label text="%ui.invoices.item.label.paidby" textFill="#666666" GridPane.rowIndex="2" />
                   <ChoiceBox maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" />
-                  <Label text="Person to Pay:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Label text="%ui.invoices.item.label.persontopay" textFill="#666666" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <ChoiceBox maxWidth="1.7976931348623157E308" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <Button fx:id="addInvoiceButton1" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#addNewInvoice" prefWidth="120.0" text="Add" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button fx:id="deleteInvoiceButton1" disable="true" mnemonicParsing="false" onAction="#deleteInvoice" text="Delete" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Button fx:id="addInvoiceButton1" defaultButton="true" disable="true" mnemonicParsing="false" onAction="#addNewInvoice" prefWidth="120.0" text="%ui.invoices.item.btn.add" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button fx:id="deleteInvoiceButton1" disable="true" mnemonicParsing="false" onAction="#deleteInvoice" text="%ui.invoices.item.btn.delete" GridPane.columnIndex="3" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
                </children>
             </GridPane>
             <TableView layoutX="53.0" layoutY="191.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="130.0">
