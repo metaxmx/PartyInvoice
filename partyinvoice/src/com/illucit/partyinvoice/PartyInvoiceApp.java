@@ -13,6 +13,7 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -355,11 +356,6 @@ public class PartyInvoiceApp extends Application {
 		this.projectHolder = new ImmutableProjectHolder();
 		this.xmlFile = null;
 		this.changed = false;
-
-		// DUmmy
-		performOperation(new AddPersonOp("Bernd"));
-		performOperation(new AddPersonOp("Alfred"));
-		performOperation(new AddPersonOp("Heinz"));
 	}
 
 	/**
@@ -444,18 +440,21 @@ public class PartyInvoiceApp extends Application {
 	}
 
 	public void performOperation(Operation operation) {
-		this.projectHolder = projectHolder.operate(operation);
-		refreshObserableData();
+		modifyProjectHolder(operation::operate);
 	}
 
 	public void undo() {
-		this.projectHolder = projectHolder.undo();
-		refreshObserableData();
+		modifyProjectHolder(ImmutableProjectHolder::undo);
 	}
 
 	public void redo() {
-		this.projectHolder = projectHolder.redo();
+		modifyProjectHolder(ImmutableProjectHolder::redo);
+	}
+
+	private void modifyProjectHolder(Function<ImmutableProjectHolder, ImmutableProjectHolder> transformation) {
+		this.projectHolder = transformation.apply(projectHolder);
 		refreshObserableData();
+		this.changed = true;
 	}
 
 	private void updateUndoRedo() {

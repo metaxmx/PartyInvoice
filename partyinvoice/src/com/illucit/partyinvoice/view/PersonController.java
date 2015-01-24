@@ -1,12 +1,13 @@
 package com.illucit.partyinvoice.view;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 
 import com.illucit.partyinvoice.AbstractController;
 import com.illucit.partyinvoice.PartyInvoiceApp;
@@ -49,33 +50,36 @@ public class PersonController extends AbstractController {
 
 		personTable.setItems(app.getPersonList());
 
-		newPersonField.textProperty().addListener((observable, oldVal, newVal) -> {
-			if (isNullOrEmpty(newVal)) {
-				addPersonButton.disableProperty().set(true);
-			} else {
-				addPersonButton.disableProperty().set(false);
-			}
-		});
+		addPersonButton.disableProperty().bind(newPersonField.textProperty().isEmpty());
+		deletePersonButton.disableProperty().bind(personTable.getSelectionModel().selectedItemProperty().isNull());
 
-		personTable.selectionModelProperty().get().selectedItemProperty().addListener((observable, oldVal, newVal) -> {
-			if (newVal == null) {
-				deletePersonButton.disableProperty().set(true);
-			} else {
-				deletePersonButton.disableProperty().set(false);
-			}
-		});
 	}
 
+	@FXML
 	public void addNewPerson() {
 		String newName = newPersonField.textProperty().get();
 		getApp().addPerson(newName);
 		newPersonField.textProperty().set("");
 	}
 
+	@FXML
 	public void deletePerson() {
 		PersonModel selectedModel = personTable.selectionModelProperty().get().selectedItemProperty().get();
 		if (selectedModel != null) {
 			getApp().deletePerson(selectedModel.getName());
+		}
+	}
+
+	@FXML
+	public void onTableKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.DELETE) {
+			deletePerson();
+			return;
+		}
+		if (event.getCode() == KeyCode.ESCAPE) {
+			personTable.getSelectionModel().clearSelection();
+			newPersonField.requestFocus();
+			return;
 		}
 	}
 

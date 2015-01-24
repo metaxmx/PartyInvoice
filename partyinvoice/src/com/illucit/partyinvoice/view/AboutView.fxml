@@ -15,7 +15,7 @@
             <Font name="Cambria Bold" size="48.0" />
          </font>
       </Label>
-      <Button layoutX="357.0" layoutY="361.0" mnemonicParsing="false" onAction="#close" text="%ui.about.close" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <Button cancelButton="true" defaultButton="true" layoutX="357.0" layoutY="361.0" mnemonicParsing="false" onAction="#close" text="%ui.about.close" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       <Label layoutX="92.0" layoutY="70.0" prefHeight="30.0" text="%ui.about.written" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="70.0">
          <font>
             <Font size="18.0" />

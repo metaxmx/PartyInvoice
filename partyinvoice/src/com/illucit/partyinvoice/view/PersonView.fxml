@@ -19,12 +19,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label maxWidth="1.7976931348623157E308" text="Add Person:" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
+            <Label maxWidth="1.7976931348623157E308" text="%ui.persons.label.name" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
             <TextField fx:id="newPersonField" maxWidth="1.7976931348623157E308" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
-            <Button fx:id="addPersonButton" defaultButton="true" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addNewPerson" text="Add" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+            <Button fx:id="addPersonButton" defaultButton="true" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addNewPerson" text="%ui.persons.btn.add" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
-      <TableView fx:id="personTable" editable="true" layoutX="100.0" layoutY="100.0" prefHeight="600.0" prefWidth="600.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
+      <TableView fx:id="personTable" editable="true" layoutX="100.0" layoutY="100.0" prefHeight="600.0" prefWidth="600.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" onKeyPressed="#onTableKeyPressed">
         <columns>
             <TableColumn fx:id="nameCol" maxWidth="-Infinity" minWidth="200.0" prefWidth="50000.0" text="%ui.persons.cols.name" />
           <TableColumn fx:id="paidCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.paid" />
@@ -32,7 +32,7 @@
             <TableColumn fx:id="diffCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.difference" />
         </columns>
       </TableView>
-      <Button fx:id="deletePersonButton" disable="true" mnemonicParsing="false" onAction="#deletePerson" text="Delete" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+      <Button fx:id="deletePersonButton" disable="true" mnemonicParsing="false" onAction="#deletePerson" text="%ui.persons.btn.delete" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
