@@ -1,6 +1,8 @@
 package com.illucit.partyinvoice.model;
 
 import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.util.StringConverter;
 
 import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
@@ -10,53 +12,59 @@ import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
  * @author Christian Simon
  *
  */
-public class PersonModel {
+public class PersonModel extends BaseModel<ImmutablePerson> {
 
-	private String name;
+	private final SimpleStringProperty nameProperty = new SimpleStringProperty();
 
-	private String paid;
+	private final SimpleStringProperty paidProperty = new SimpleStringProperty();
 
-	private String share;
+	private final SimpleStringProperty shareProperty = new SimpleStringProperty();
 
-	private String difference;
+	private final SimpleStringProperty differenceProperty = new SimpleStringProperty();
 
 	public PersonModel(ImmutablePerson person) {
-		this.name = person.getName();
-		this.paid = currencyToString(person.getPaid());
-		this.share = currencyToString(person.getShare());
-		this.difference = currencyToString(person.getDifference());
+		super(person);
+		update(person);
 	}
 
-	public String getName() {
-		return name;
+	@Override
+	public void update(ImmutablePerson person) {
+		nameProperty.set(person.getName());
+		paidProperty.set(currencyToString(person.getPaid()));
+		shareProperty.set(currencyToString(person.getShare()));
+		differenceProperty.set(currencyToString(person.getDifference()));
 	}
 
-	public String getPaid() {
-		return paid;
+	public SimpleStringProperty nameProperty() {
+		return nameProperty;
 	}
 
-	public String getShare() {
-		return share;
+	public SimpleStringProperty paidProperty() {
+		return paidProperty;
 	}
 
-	public String getDifference() {
-		return difference;
+	public SimpleStringProperty shareProperty() {
+		return shareProperty;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public SimpleStringProperty differenceProperty() {
+		return differenceProperty;
 	}
 
-	public void setPaid(String paid) {
-		this.paid = paid;
-	}
+	public static final PersonStringConverter converter = new PersonStringConverter();
 
-	public void setShare(String share) {
-		this.share = share;
-	}
+	public static class PersonStringConverter extends StringConverter<PersonModel> {
 
-	public void setDifference(String difference) {
-		this.difference = difference;
+		@Override
+		public String toString(PersonModel person) {
+			return person.getId() + ": " + person.nameProperty().get();
+		}
+
+		@Override
+		public PersonModel fromString(String string) {
+			return null;
+		}
+
 	}
 
 }

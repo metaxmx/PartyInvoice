@@ -29,6 +29,9 @@ public class FxmlHelper {
 
 	public static <C, T> T loadFxml(PartyInvoiceApp app, String view, Class<C> controllerClass,
 			InnerDocumentHandler<C> handler) {
+
+		logger.info("Loading FXML file " + VIEW_PREFIX + view);
+
 		ResourceBundle bundle = app.getBundle();
 
 		FXMLLoader loader = new FXMLLoader();
@@ -106,6 +109,9 @@ public class FxmlHelper {
 	 */
 	public static <C> Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey, Class<C> controllerClass,
 			StageHandler<C> handler) {
+
+		logger.info("Loading FXML file " + VIEW_PREFIX + view);
+
 		ResourceBundle bundle = app.getBundle();
 
 		FXMLLoader loader = new FXMLLoader();

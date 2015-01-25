@@ -66,7 +66,7 @@ public class PersonController extends AbstractController {
 	public void deletePerson() {
 		PersonModel selectedModel = personTable.selectionModelProperty().get().selectedItemProperty().get();
 		if (selectedModel != null) {
-			getApp().deletePerson(selectedModel.getName());
+			getApp().deletePerson(selectedModel.getId());
 		}
 	}
 

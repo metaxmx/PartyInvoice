@@ -2,6 +2,7 @@ package com.illucit.partyinvoice.xmldata;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
@@ -15,32 +16,40 @@ public class XmlItem implements Item, Serializable {
 	 * Attributes
 	 */
 
-	private String name;
+	private int id;
+
+	private String title;
 
 	private long price;
 
 	private int quantity;
 
-	private String paidBy;
+	private Integer paidBy;
 
-	private String personToPay;
+	private Integer personToPay;
 
-	private String groupToPay;
+	private Integer groupToPay;
 
 	/*
 	 * Attribute Getters
 	 */
 
 	@Override
-	@XmlElement(name = "Name")
-	public String getName() {
-		return name;
+	@XmlAttribute(name = "id", required = true)
+	public int getId() {
+		return id;
+	}
+
+	@Override
+	@XmlElement(name = "Title")
+	public String getTitle() {
+		return title;
 	}
 
 	@Override
 	@XmlElement(name = "Price")
-	@XmlJavaTypeAdapter(value = CurrencyTypeAdapter.class)
-	public Long getPrice() {
+	@XmlJavaTypeAdapter(value = CurrencyTypeAdapter.class, type = long.class)
+	public long getPrice() {
 		return price;
 	}
 
@@ -52,26 +61,26 @@ public class XmlItem implements Item, Serializable {
 
 	@Override
 	@XmlElement(name = "Total")
-	@XmlJavaTypeAdapter(value = CurrencyTypeAdapter.class)
-	public Long getTotal() {
+	@XmlJavaTypeAdapter(value = CurrencyTypeAdapter.class, type = long.class)
+	public long getTotal() {
 		return Item.super.getTotal();
 	}
 
 	@Override
 	@XmlElement(name = "PaidBy")
-	public String getPaidBy() {
+	public Integer getPaidBy() {
 		return paidBy;
 	}
 
 	@Override
 	@XmlElement(name = "PersonToPay")
-	public String getPersonToPay() {
+	public Integer getPersonToPay() {
 		return personToPay;
 	}
 
 	@Override
 	@XmlElement(name = "GroupToPay")
-	public String getGroupToPay() {
+	public Integer getGroupToPay() {
 		return groupToPay;
 	}
 
@@ -79,11 +88,15 @@ public class XmlItem implements Item, Serializable {
 	 * Attribute Setters
 	 */
 
-	public void setName(String name) {
-		this.name = name;
+	public void setId(int id) {
+		this.id = id;
 	}
 
-	public void setPrice(Long price) {
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setPrice(long price) {
 		this.price = price;
 	}
 
@@ -91,19 +104,19 @@ public class XmlItem implements Item, Serializable {
 		this.quantity = quantity;
 	}
 
-	public void setTotal(Long total) {
+	public void setTotal(long total) {
 		// NOOP
 	}
 
-	public void setPaidBy(String paidBy) {
+	public void setPaidBy(Integer paidBy) {
 		this.paidBy = paidBy;
 	}
 
-	public void setPersonToPay(String personToPay) {
+	public void setPersonToPay(Integer personToPay) {
 		this.personToPay = personToPay;
 	}
 
-	public void setGroupToPay(String groupToPay) {
+	public void setGroupToPay(Integer groupToPay) {
 		this.groupToPay = groupToPay;
 	}
 

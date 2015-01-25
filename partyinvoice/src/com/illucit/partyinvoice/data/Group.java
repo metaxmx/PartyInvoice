@@ -2,10 +2,10 @@ package com.illucit.partyinvoice.data;
 
 import java.util.List;
 
-public interface Group {
+public interface Group extends BaseData {
 
 	public String getName();
-	
-	public List<String> getPersonNames();
-	
+
+	public List<Integer> getPersons();
+
 }

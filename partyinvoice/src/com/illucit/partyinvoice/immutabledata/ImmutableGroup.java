@@ -2,12 +2,11 @@ package com.illucit.partyinvoice.immutabledata;
 
 import static java.util.stream.Collectors.toList;
 
-import java.io.Serializable;
 import java.util.List;
 
 import com.illucit.partyinvoice.data.Group;
 
-public class ImmutableGroup implements Group, Serializable {
+public class ImmutableGroup extends ImmutableBaseData implements Group {
 
 	private static final long serialVersionUID = -8019203314162371256L;
 
@@ -28,20 +27,21 @@ public class ImmutableGroup implements Group, Serializable {
 		return name;
 	}
 
-	public List<ImmutablePerson> getPersons() {
+	public List<ImmutablePerson> getPersonsX() {
 		return persons;
 	}
 
 	@Override
-	public List<String> getPersonNames() {
-		return persons.stream().map(ImmutablePerson::getName).collect(toList());
+	public List<Integer> getPersons() {
+		return persons.stream().map(ImmutablePerson::getId).collect(toList());
 	}
 
 	/*
 	 * --- Constructors ---
 	 */
 
-	public ImmutableGroup(String name, List<ImmutablePerson> persons) {
+	public ImmutableGroup(int id, String name, List<ImmutablePerson> persons) {
+		super(id);
 		this.name = name;
 		this.persons = persons;
 	}

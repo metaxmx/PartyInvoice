@@ -1,25 +1,24 @@
 package com.illucit.partyinvoice.data;
 
-public interface Item {
+public interface Item extends BaseData {
 
-	public String getName();
+	public String getTitle();
 
 	public int getQuantity();
 
-	public Long getPrice();
+	public long getPrice();
 
-	public default Long getTotal() {
-		Long price = getPrice();
-		return getQuantity() * (price == null ? 0 : price);
+	public default long getTotal() {
+		return getQuantity() * getPrice();
 	}
 
 	// Nullable
-	public String getPaidBy();
+	public Integer getPaidBy();
 
 	// Nullable
-	public String getPersonToPay();
+	public Integer getPersonToPay();
 
 	// Nullable
-	public String getGroupToPay();
+	public Integer getGroupToPay();
 
 }

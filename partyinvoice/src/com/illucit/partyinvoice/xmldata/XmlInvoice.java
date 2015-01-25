@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 
@@ -17,15 +18,23 @@ public class XmlInvoice implements Invoice, Serializable {
 	 * Attributes
 	 */
 
+	private int id;
+
 	private String title;
 
 	private List<XmlItem> items = new LinkedList<>();
 
-	private String paidBy;
+	private int paidBy;
 
 	/*
 	 * Attribute Getters
 	 */
+
+	@Override
+	@XmlAttribute(name = "id", required = true)
+	public int getId() {
+		return id;
+	}
 
 	@Override
 	@XmlElement(name = "Title")
@@ -42,13 +51,17 @@ public class XmlInvoice implements Invoice, Serializable {
 
 	@Override
 	@XmlElement(name = "PaidBy")
-	public String getPaidBy() {
+	public int getPaidBy() {
 		return paidBy;
 	}
 
 	/*
 	 * Attribute Setters
 	 */
+
+	public void setId(int id) {
+		this.id = id;
+	}
 
 	public void setTitle(String title) {
 		this.title = title;
@@ -58,7 +71,7 @@ public class XmlInvoice implements Invoice, Serializable {
 		this.items = items;
 	}
 
-	public void setPaidBy(String paidBy) {
+	public void setPaidBy(int paidBy) {
 		this.paidBy = paidBy;
 	}
 

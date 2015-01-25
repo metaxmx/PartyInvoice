@@ -6,14 +6,14 @@ public class DelInvoiceOp implements Operation {
 
 	private static final long serialVersionUID = -2181924544628568479L;
 
-	private final String title;
+	private final int id;
 
-	public DelInvoiceOp(String title) {
-		this.title = title;
+	public DelInvoiceOp(int id) {
+		this.id = id;
 	}
 
-	public String getTitle() {
-		return title;
+	public int getId() {
+		return id;
 	}
 
 }

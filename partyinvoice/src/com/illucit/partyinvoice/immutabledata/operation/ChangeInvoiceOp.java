@@ -6,28 +6,27 @@ public class ChangeInvoiceOp implements Operation {
 
 	private static final long serialVersionUID = 1213998039427700139L;
 
-	private final String oldTitle;
+	private final int id;
 
 	private final String newTitle;
 
-	private final String paidBy;
+	private final int paidBy;
 
-	public ChangeInvoiceOp(String oldTitle, String newTitle, String paidBy) {
-		super();
-		this.oldTitle = oldTitle;
+	public ChangeInvoiceOp(int id, String newTitle, int paidBy) {
+		this.id = id;
 		this.newTitle = newTitle;
 		this.paidBy = paidBy;
 	}
 
-	public String getOldTitle() {
-		return oldTitle;
+	public int getId() {
+		return id;
 	}
 
 	public String getNewTitle() {
 		return newTitle;
 	}
 
-	public String getPaidBy() {
+	public int getPaidBy() {
 		return paidBy;
 	}
 

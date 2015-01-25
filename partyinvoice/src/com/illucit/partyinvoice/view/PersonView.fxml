@@ -24,13 +24,16 @@
             <Button fx:id="addPersonButton" defaultButton="true" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addNewPerson" text="%ui.persons.btn.add" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
       </GridPane>
-      <TableView fx:id="personTable" editable="true" layoutX="100.0" layoutY="100.0" prefHeight="600.0" prefWidth="600.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0" onKeyPressed="#onTableKeyPressed">
+      <TableView fx:id="personTable" editable="true" layoutX="100.0" layoutY="100.0" onKeyPressed="#onTableKeyPressed" prefHeight="600.0" prefWidth="600.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="40.0">
         <columns>
-            <TableColumn fx:id="nameCol" maxWidth="-Infinity" minWidth="200.0" prefWidth="50000.0" text="%ui.persons.cols.name" />
-          <TableColumn fx:id="paidCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.paid" />
-          <TableColumn fx:id="shareCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.share" />
-            <TableColumn fx:id="diffCol" editable="false" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" resizable="false" text="%ui.persons.cols.difference" />
+            <TableColumn fx:id="nameCol" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="250.0" text="%ui.persons.cols.name" />
+          <TableColumn fx:id="paidCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="100.0" text="%ui.persons.cols.paid" />
+          <TableColumn fx:id="shareCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="100.0" text="%ui.persons.cols.share" />
+            <TableColumn fx:id="diffCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="100.0" text="%ui.persons.cols.difference" />
         </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
       </TableView>
       <Button fx:id="deletePersonButton" disable="true" mnemonicParsing="false" onAction="#deletePerson" text="%ui.persons.btn.delete" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" />
    </children>

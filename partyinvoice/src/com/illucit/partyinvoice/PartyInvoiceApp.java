@@ -6,16 +6,23 @@ import static com.illucit.partyinvoice.LogSetup.setupLogging;
 import static com.illucit.partyinvoice.XmlIO.loadFromFile;
 import static com.illucit.partyinvoice.XmlIO.saveToFile;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 import javafx.application.Application;
+import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Parent;
@@ -31,14 +38,19 @@ import javax.xml.bind.JAXBException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.illucit.partyinvoice.data.BaseData;
 import com.illucit.partyinvoice.data.Operation;
-import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
+import com.illucit.partyinvoice.immutabledata.ImmutableItem;
 import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
 import com.illucit.partyinvoice.immutabledata.operation.AddInvoiceOp;
+import com.illucit.partyinvoice.immutabledata.operation.AddItemOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddPersonOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelInvoiceOp;
+import com.illucit.partyinvoice.immutabledata.operation.DelItemOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelPersonOp;
+import com.illucit.partyinvoice.model.BaseModel;
 import com.illucit.partyinvoice.model.InvoiceModel;
+import com.illucit.partyinvoice.model.ItemModel;
 import com.illucit.partyinvoice.model.PersonModel;
 import com.illucit.partyinvoice.view.RootController;
 import com.illucit.partyinvoice.xmldata.XmlProject;
@@ -52,7 +64,17 @@ import com.illucit.partyinvoice.xmldata.XmlProject;
 public class PartyInvoiceApp extends Application {
 
 	public enum SelectedView {
-		Welcome, Persons, Invoices, Result
+		Welcome(VIEW_WELCOME), Persons(VIEW_PERSONS), Invoices(VIEW_INVOICES), Result(VIEW_RESULT);
+
+		private final String view;
+
+		private SelectedView(String view) {
+			this.view = view;
+		}
+
+		public String getView() {
+			return view;
+		}
 	}
 
 	private static final String BUNDLE_NAME = "partyinvoice";
@@ -66,6 +88,9 @@ public class PartyInvoiceApp extends Application {
 	public static final String VIEW_WELCOME = "WelcomeView.fxml";
 	public static final String VIEW_PERSONS = "PersonView.fxml";
 	public static final String VIEW_INVOICES = "InvoicesView.fxml";
+	public static final String VIEW_RESULT = "ResultView.fxml";
+
+	private final Map<String, Parent> loadedViews = new ConcurrentHashMap<>();
 
 	private File userSettingsDir;
 
@@ -91,9 +116,11 @@ public class PartyInvoiceApp extends Application {
 
 	private ObservableList<PersonModel> personList;
 
-	private ObservableList<String> personNameList;
-
 	private ObservableList<InvoiceModel> invoiceList;
+
+	private ReadOnlyObjectProperty<InvoiceModel> selectedInvoiceProperty = null;
+
+	private ObservableList<ItemModel> itemList;
 
 	/**
 	 * Start program.
@@ -156,14 +183,14 @@ public class PartyInvoiceApp extends Application {
 		});
 
 		personList = FXCollections.observableArrayList();
-		personNameList = FXCollections.observableArrayList();
 		invoiceList = FXCollections.observableArrayList();
+		itemList = FXCollections.observableArrayList();
 
 		initializeProject();
 
 		initUi();
 
-		refreshObserableData();
+		refreshObserableData(true);
 
 		primaryStage.show();
 	}
@@ -198,34 +225,13 @@ public class PartyInvoiceApp extends Application {
 		primaryStage.setScene(scene);
 	}
 
-	public void selectView(SelectedView view) {
-		this.view = view;
-		loadInnerView();
-	}
+	public void selectView(SelectedView selectedView) {
+		this.view = selectedView;
+		String viewFile = selectedView.getView();
 
-	private void loadInnerView() {
-		switch (view) {
-		case Welcome:
-			Parent welcome = loadFxml(this, VIEW_WELCOME);
-			rootController.updateRightSide(welcome);
-			break;
-
-		case Persons:
-			Parent persons = loadFxml(this, VIEW_PERSONS);
-			rootController.updateRightSide(persons);
-			break;
-
-		case Invoices:
-			Parent invoices = loadFxml(this, VIEW_INVOICES);
-			rootController.updateRightSide(invoices);
-			break;
-
-		default:
-			break;
-		}
-		if (rootController != null) {
-			rootController.highlightLink();
-		}
+		Parent parent = loadedViews.computeIfAbsent(viewFile, v -> loadFxml(this, v));
+		rootController.updateRightSide(parent);
+		rootController.highlightLink();
 	}
 
 	public SelectedView getView() {
@@ -284,12 +290,17 @@ public class PartyInvoiceApp extends Application {
 		return personList;
 	}
 
-	public ObservableList<String> getPersonNameList() {
-		return personNameList;
-	}
-
 	public ObservableList<InvoiceModel> getInvoiceList() {
 		return invoiceList;
+	}
+
+	public void setSelectedInvoiceProperty(ReadOnlyObjectProperty<InvoiceModel> selectedInvoiceProperty) {
+		this.selectedInvoiceProperty = selectedInvoiceProperty;
+		this.selectedInvoiceProperty.addListener((observable, oldVal, newVal) -> refreshItemData(newVal, false));
+	}
+
+	public ObservableList<ItemModel> getItemList() {
+		return itemList;
 	}
 
 	/**
@@ -329,15 +340,27 @@ public class PartyInvoiceApp extends Application {
 		});
 	}
 
-	private void refreshObserableData() {
-		this.personList.setAll(this.projectHolder.getProject().getPersons().stream().map(PersonModel::new)
-				.collect(toList()));
-		this.personNameList.setAll(this.projectHolder.getProject().getPersons().stream().map(ImmutablePerson::getName)
-				.collect(toList()));
-		this.invoiceList.setAll(this.projectHolder.getProject().getInvoices().stream().map(InvoiceModel::new)
-				.collect(toList()));
+	private void refreshObserableData(boolean clear) {
+		updateList(personList, projectHolder.getProject().getPersons(), PersonModel::new, clear);
+		updateList(invoiceList, projectHolder.getProject().getInvoices(), InvoiceModel::new, clear);
+
+		if (this.selectedInvoiceProperty != null) {
+			refreshItemData(this.selectedInvoiceProperty.get(), clear);
+		}
 
 		updateUndoRedo();
+	}
+
+	private void refreshItemData(InvoiceModel model, boolean clear) {
+		if (model == null) {
+			itemList.clear();
+		} else {
+			List<ImmutableItem> updatedItems = this.projectHolder.getProject().getInvoices().stream()
+					.filter(iv -> iv.getId() == model.getId()).flatMap(iv -> iv.getItems().stream())
+					.collect(toList());
+			updateList(itemList, updatedItems, ItemModel::new, clear);
+
+		}
 	}
 
 	/**
@@ -346,7 +369,7 @@ public class PartyInvoiceApp extends Application {
 	private void newProject() {
 		logger.info("Creating new project");
 		initializeProject();
-		refreshObserableData();
+		refreshObserableData(true);
 	}
 
 	/**
@@ -379,7 +402,7 @@ public class PartyInvoiceApp extends Application {
 			this.xmlFile = loadFile;
 			this.changed = false;
 
-			refreshObserableData();
+			refreshObserableData(true);
 
 		} catch (JAXBException e) {
 			logger.error("Error loading project", e);
@@ -453,7 +476,7 @@ public class PartyInvoiceApp extends Application {
 
 	private void modifyProjectHolder(Function<ImmutableProjectHolder, ImmutableProjectHolder> transformation) {
 		this.projectHolder = transformation.apply(projectHolder);
-		refreshObserableData();
+		refreshObserableData(false);
 		this.changed = true;
 	}
 
@@ -464,6 +487,44 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
+	private <D extends BaseData, M extends BaseModel<D>> void updateList(ObservableList<M> observableList,
+			List<D> updatedData, Function<D, M> constructor, boolean clear) {
+		
+		if (clear) {
+			
+			// Clear list and add new models
+			
+			observableList.setAll(updatedData.stream().map(constructor).collect(toList()));
+			
+		} else {
+			
+			// Try to retain existing models
+			
+			Set<Integer> remainingIds = updatedData.stream().map(data -> data.getId()).collect(toSet());
+			Map<Integer, M> modelsById = observableList.stream().collect(toMap(model -> model.getId(), model -> model));
+			
+			// Remove deleted models
+			modelsById.keySet().forEach(id -> {
+				if (!remainingIds.contains(id)) {
+					observableList.remove(modelsById.get(id));
+				}
+			});
+			
+			// Update and Add models
+			for (D data : updatedData) {
+				if (modelsById.containsKey(data.getId())) {
+					// Update
+					modelsById.get(data.getId()).update(data);
+				} else {
+					// Add
+					observableList.add(constructor.apply(data));
+				}
+			}
+			
+		}
+		
+	}
+
 	/*
 	 * Operations
 	 */
@@ -472,16 +533,28 @@ public class PartyInvoiceApp extends Application {
 		performOperation(new AddPersonOp(name));
 	}
 
-	public void deletePerson(String name) {
-		performOperation(new DelPersonOp(name));
+	public void deletePerson(int id) {
+		performOperation(new DelPersonOp(id));
 	}
 
-	public void addInvoice(String title, String paidBy) {
+	public void addInvoice(String title, int paidBy) {
 		performOperation(new AddInvoiceOp(title, paidBy));
 	}
 
-	public void deleteInvoice(String title) {
-		performOperation(new DelInvoiceOp(title));
+	public void deleteInvoice(int id) {
+		performOperation(new DelInvoiceOp(id));
+	}
+
+	public void addItem(String title, long price, int quantity, Integer paidBy, Integer personToPay, Integer groupToPay) {
+		InvoiceModel selectedInvoice = this.selectedInvoiceProperty.get();
+		if (selectedInvoice == null) {
+			return;
+		}
+		performOperation(new AddItemOp(selectedInvoice.getId(), title, price, quantity, paidBy, personToPay, groupToPay));
+	}
+
+	public void deleteItem(int id) {
+		performOperation(new DelItemOp(id));
 	}
 
 }

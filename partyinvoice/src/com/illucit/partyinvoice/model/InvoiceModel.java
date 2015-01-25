@@ -1,6 +1,8 @@
 package com.illucit.partyinvoice.model;
 
 import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import com.illucit.partyinvoice.immutabledata.ImmutableInvoice;
 
@@ -10,53 +12,50 @@ import com.illucit.partyinvoice.immutabledata.ImmutableInvoice;
  * @author Christian Simon
  *
  */
-public class InvoiceModel {
+public class InvoiceModel extends BaseModel<ImmutableInvoice> {
 
-	private String title;
+	private final SimpleStringProperty titleProperty = new SimpleStringProperty();
 
-	private String paidBy;
+	private final SimpleIntegerProperty paidByProperty = new SimpleIntegerProperty();
 
-	private Integer items;
+	private final SimpleStringProperty paidByNameProperty = new SimpleStringProperty();
 
-	private String total;
+	private final SimpleIntegerProperty itemsProperty = new SimpleIntegerProperty();
+
+	private final SimpleStringProperty totalProperty = new SimpleStringProperty();
 
 	public InvoiceModel(ImmutableInvoice invoice) {
-		this.title = invoice.getTitle();
-		this.paidBy = invoice.getPaidBy();
-		this.items = invoice.getItems().size();
-		this.total = currencyToString(invoice.getItems().stream().mapToLong(item -> item.getTotal()).sum());
+		super(invoice);
+		update(invoice);
 	}
 
-	public String getTitle() {
-		return title;
+	@Override
+	public void update(ImmutableInvoice invoice) {
+		titleProperty.set(invoice.getTitle());
+		paidByProperty.set(invoice.getPaidBy());
+		paidByNameProperty.set(invoice.getPaidByPerson() == null ? "" : invoice.getPaidByPerson().getName());
+		itemsProperty.set(invoice.getItems().stream().mapToInt(item -> item.getQuantity()).sum());
+		totalProperty.set(currencyToString(invoice.getItems().stream().mapToLong(item -> item.getTotal()).sum()));
 	}
 
-	public String getPaidBy() {
-		return paidBy;
+	public SimpleStringProperty titleProperty() {
+		return titleProperty;
 	}
 
-	public Integer getItems() {
-		return items;
+	public SimpleIntegerProperty paidByProperty() {
+		return paidByProperty;
 	}
 
-	public String getTotal() {
-		return total;
+	public SimpleStringProperty paidByNameProperty() {
+		return paidByNameProperty;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public SimpleIntegerProperty itemsProperty() {
+		return itemsProperty;
 	}
 
-	public void setPaidBy(String paidBy) {
-		this.paidBy = paidBy;
-	}
-
-	public void setItems(Integer items) {
-		this.items = items;
-	}
-
-	public void setTotal(String total) {
-		this.total = total;
+	public SimpleStringProperty totalProperty() {
+		return totalProperty;
 	}
 
 }

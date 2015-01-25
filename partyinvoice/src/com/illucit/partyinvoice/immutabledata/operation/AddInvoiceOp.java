@@ -8,9 +8,9 @@ public class AddInvoiceOp implements Operation {
 
 	private final String title;
 
-	private final String paidBy;
+	private final int paidBy;
 
-	public AddInvoiceOp(String title, String paidBy) {
+	public AddInvoiceOp(String title, int paidBy) {
 		this.title = title;
 		this.paidBy = paidBy;
 	}
@@ -19,7 +19,7 @@ public class AddInvoiceOp implements Operation {
 		return title;
 	}
 
-	public String getPaidBy() {
+	public int getPaidBy() {
 		return paidBy;
 	}
 

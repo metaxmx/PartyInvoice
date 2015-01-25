@@ -1,10 +1,8 @@
 package com.illucit.partyinvoice.immutabledata;
 
-import java.io.Serializable;
-
 import com.illucit.partyinvoice.data.Item;
 
-public class ImmutableItem implements Item, Serializable {
+public class ImmutableItem extends ImmutableBaseData implements Item {
 
 	private static final long serialVersionUID = -623482843661020919L;
 
@@ -12,29 +10,29 @@ public class ImmutableItem implements Item, Serializable {
 	 * --- Members ---
 	 */
 
-	private final String name;
+	private final String title;
 
 	private final long price;
 
 	private final int quantity;
 
-	private final String getPaidBy;
+	private final ImmutablePerson paidByPerson;
 
-	private final String group;
+	private final ImmutableGroup groupToPayGroup;
 
-	private final String person;
+	private final ImmutablePerson personToPayPerson;
 
 	/*
 	 * --- Getters ---
 	 */
 
 	@Override
-	public String getName() {
-		return name;
+	public String getTitle() {
+		return title;
 	}
 
 	@Override
-	public Long getPrice() {
+	public long getPrice() {
 		return price;
 	}
 
@@ -44,31 +42,45 @@ public class ImmutableItem implements Item, Serializable {
 	}
 
 	@Override
-	public String getPaidBy() {
-		return getPaidBy;
+	public Integer getPaidBy() {
+		return paidByPerson == null ? null : paidByPerson.getId();
+	}
+
+	public ImmutablePerson getGetPaidByPerson() {
+		return paidByPerson;
 	}
 
 	@Override
-	public String getGroupToPay() {
-		return group;
+	public Integer getGroupToPay() {
+		return groupToPayGroup == null ? null : groupToPayGroup.getId();
+	}
+
+	public ImmutableGroup getGroupToPayGroup() {
+		return groupToPayGroup;
 	}
 
 	@Override
-	public String getPersonToPay() {
-		return person;
+	public Integer getPersonToPay() {
+		return personToPayPerson == null ? null : personToPayPerson.getId();
+	}
+
+	public ImmutablePerson getPersonToPayPerson() {
+		return personToPayPerson;
 	}
 
 	/*
 	 * --- Constructors ---
 	 */
 
-	public ImmutableItem(String name, long price, int quantity, String getPaidBy, String group, String person) {
-		this.name = name;
+	public ImmutableItem(int id, String title, long price, int quantity, ImmutablePerson paidBy,
+			ImmutableGroup groupToPay, ImmutablePerson personToPay) {
+		super(id);
+		this.title = title;
 		this.price = price;
 		this.quantity = quantity;
-		this.getPaidBy = getPaidBy;
-		this.group = group;
-		this.person = person;
+		this.paidByPerson = paidBy;
+		this.groupToPayGroup = groupToPay;
+		this.personToPayPerson = personToPay;
 	}
 
 }
