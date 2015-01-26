@@ -1,0 +1,14 @@
+Party Invoice
+=============
+
+Version: 1.0  
+Author: Christian Simon <[simon@illucit.com](simon@illucit.com)>  
+Copyright: illucit Software  
+Website: [www.illucit.com](www.illucit.com)
+
+Purpose
+-------
+
+Party Invoice is a tool to manage costs for a meeting, party or event, which should be
+distributed amongst a group of persons. The application tracks which payments have already
+been made by whom and calculates the difference to the share each person has to pay.
