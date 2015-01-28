@@ -21,6 +21,8 @@ import com.illucit.partyinvoice.PartyInvoiceApp;
 import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.ItemModel;
 import com.illucit.partyinvoice.model.PersonModel;
+import com.illucit.partyinvoice.model.ToPayModel;
+import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
 
 public class InvoicesController extends AbstractController {
 
@@ -99,7 +101,7 @@ public class InvoicesController extends AbstractController {
 	private ChoiceBox<PersonModel> newItemPaidByField;
 
 	@FXML
-	private ChoiceBox<String> newItemToPayField;
+	private ChoiceBox<ToPayModel> newItemToPayField;
 
 	@FXML
 	private Button addItemButton;
@@ -121,8 +123,6 @@ public class InvoicesController extends AbstractController {
 		invoiceTotalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
 
 		invoicesTable.setItems(app.getInvoiceList());
-
-		newInvoicePaidByField.setConverter(PersonModel.converter);
 
 		newInvoicePaidByField.setItems(app.getPersonList());
 
@@ -148,10 +148,11 @@ public class InvoicesController extends AbstractController {
 		itemToPayCol.setCellValueFactory(new PropertyValueFactory<>("topay"));
 
 		itemTable.setItems(app.getItemList());
-		
-		newItemPaidByField.setConverter(PersonModel.converter);
-		
+
 		newItemPaidByField.setItems(app.getPersonList());
+
+		newItemToPayField.setItems(app.getToPayList());
+		newItemToPayField.getSelectionModel().selectFirst();
 
 		addItemButton
 				.disableProperty()
@@ -250,18 +251,25 @@ public class InvoicesController extends AbstractController {
 		Long price = resolvePrice(newItemPriceField.getText());
 		Integer paidBy = null;
 		if (!newItemPaidByField.getSelectionModel().isEmpty()) {
-			paidBy = newItemPaidByField.getSelectionModel().getSelectedItem().getId();
+			paidBy = newItemPaidByField.getValue().getId();
 		}
-		Integer personToPay = null; // TODO
-		Integer groupToPay = null; // TODO
+		Integer personToPay = null;
+		Integer groupToPay = null;
+		if (!newItemToPayField.getSelectionModel().isEmpty()) {
+			ToPayModel toPay = newItemToPayField.getValue();
+			personToPay = toPay.getType() == ToPayType.Person ? toPay.getPerson().getId() : null;
+			groupToPay = toPay.getType() == ToPayType.Group ? toPay.getGroup().getId() : null;
+		}
 
 		if (quantity == null || price == null) {
 			return;
 		}
 		getApp().addItem(newTitle, price, quantity, paidBy, personToPay, groupToPay);
-		itemTitleCol.textProperty().set("");
-		itemQuantityCol.textProperty().set("");
-		itemPriceCol.textProperty().set("");
+		newItemTitleField.textProperty().set("");
+		newItemQuantityField.textProperty().set("");
+		newItemPriceField.textProperty().set("");
+		newItemPaidByField.getSelectionModel().clearSelection();
+		newItemToPayField.getSelectionModel().selectFirst();
 	}
 
 	@FXML

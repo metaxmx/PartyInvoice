@@ -2,7 +2,6 @@ package com.illucit.partyinvoice.model;
 
 import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.util.StringConverter;
 
 import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
@@ -51,20 +50,9 @@ public class PersonModel extends BaseModel<ImmutablePerson> {
 		return differenceProperty;
 	}
 
-	public static final PersonStringConverter converter = new PersonStringConverter();
-
-	public static class PersonStringConverter extends StringConverter<PersonModel> {
-
-		@Override
-		public String toString(PersonModel person) {
-			return person.getId() + ": " + person.nameProperty().get();
-		}
-
-		@Override
-		public PersonModel fromString(String string) {
-			return null;
-		}
-
+	@Override
+	public String toString() {
+		return nameProperty().get();
 	}
 
 }

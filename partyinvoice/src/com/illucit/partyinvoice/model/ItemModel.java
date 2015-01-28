@@ -35,7 +35,14 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 		totalProperty.set(currencyToString(item.getTotal()));
 		paidbyProperty.set(item.getPaidBy() == null ? 0 : item.getPaidBy());
 		paidByNameProperty.set(item.getGetPaidByPerson() == null ? "" : item.getGetPaidByPerson().getName());
-		topayProperty.set("ALL"); // TODO
+
+		String toPayTitle = "All";
+		if (item.getPersonToPayPerson() != null) {
+			toPayTitle = item.getPersonToPayPerson().getName();
+		} else if (item.getGroupToPayGroup() != null) {
+			toPayTitle = item.getGroupToPayGroup().getName();
+		}
+		topayProperty.set(toPayTitle);
 	}
 
 	public SimpleStringProperty titleProperty() {

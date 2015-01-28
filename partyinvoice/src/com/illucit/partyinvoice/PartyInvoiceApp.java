@@ -40,7 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import com.illucit.partyinvoice.data.BaseData;
 import com.illucit.partyinvoice.data.Operation;
+import com.illucit.partyinvoice.immutabledata.ImmutableGroup;
 import com.illucit.partyinvoice.immutabledata.ImmutableItem;
+import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
 import com.illucit.partyinvoice.immutabledata.operation.AddInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddItemOp;
@@ -52,6 +54,8 @@ import com.illucit.partyinvoice.model.BaseModel;
 import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.ItemModel;
 import com.illucit.partyinvoice.model.PersonModel;
+import com.illucit.partyinvoice.model.ToPayModel;
+import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
 import com.illucit.partyinvoice.view.RootController;
 import com.illucit.partyinvoice.xmldata.XmlProject;
 
@@ -122,6 +126,8 @@ public class PartyInvoiceApp extends Application {
 
 	private ObservableList<ItemModel> itemList;
 
+	private ObservableList<ToPayModel> toPayList;
+
 	/**
 	 * Start program.
 	 * 
@@ -185,6 +191,9 @@ public class PartyInvoiceApp extends Application {
 		personList = FXCollections.observableArrayList();
 		invoiceList = FXCollections.observableArrayList();
 		itemList = FXCollections.observableArrayList();
+		toPayList = FXCollections.observableArrayList();
+
+		toPayList.add(new ToPayModel()); // Add default "All entry"
 
 		initializeProject();
 
@@ -303,6 +312,10 @@ public class PartyInvoiceApp extends Application {
 		return itemList;
 	}
 
+	public ObservableList<ToPayModel> getToPayList() {
+		return toPayList;
+	}
+
 	/**
 	 * Quit program (and show "Save Confirmation" dialog is necessary).
 	 */
@@ -343,6 +356,7 @@ public class PartyInvoiceApp extends Application {
 	private void refreshObserableData(boolean clear) {
 		updateList(personList, projectHolder.getProject().getPersons(), PersonModel::new, clear);
 		updateList(invoiceList, projectHolder.getProject().getInvoices(), InvoiceModel::new, clear);
+		updateToPayModelList(clear);
 
 		if (this.selectedInvoiceProperty != null) {
 			refreshItemData(this.selectedInvoiceProperty.get(), clear);
@@ -356,8 +370,7 @@ public class PartyInvoiceApp extends Application {
 			itemList.clear();
 		} else {
 			List<ImmutableItem> updatedItems = this.projectHolder.getProject().getInvoices().stream()
-					.filter(iv -> iv.getId() == model.getId()).flatMap(iv -> iv.getItems().stream())
-					.collect(toList());
+					.filter(iv -> iv.getId() == model.getId()).flatMap(iv -> iv.getItems().stream()).collect(toList());
 			updateList(itemList, updatedItems, ItemModel::new, clear);
 
 		}
@@ -489,27 +502,27 @@ public class PartyInvoiceApp extends Application {
 
 	private <D extends BaseData, M extends BaseModel<D>> void updateList(ObservableList<M> observableList,
 			List<D> updatedData, Function<D, M> constructor, boolean clear) {
-		
+
 		if (clear) {
-			
+
 			// Clear list and add new models
-			
+
 			observableList.setAll(updatedData.stream().map(constructor).collect(toList()));
-			
+
 		} else {
-			
+
 			// Try to retain existing models
-			
+
 			Set<Integer> remainingIds = updatedData.stream().map(data -> data.getId()).collect(toSet());
 			Map<Integer, M> modelsById = observableList.stream().collect(toMap(model -> model.getId(), model -> model));
-			
+
 			// Remove deleted models
 			modelsById.keySet().forEach(id -> {
 				if (!remainingIds.contains(id)) {
 					observableList.remove(modelsById.get(id));
 				}
 			});
-			
+
 			// Update and Add models
 			for (D data : updatedData) {
 				if (modelsById.containsKey(data.getId())) {
@@ -520,9 +533,81 @@ public class PartyInvoiceApp extends Application {
 					observableList.add(constructor.apply(data));
 				}
 			}
-			
+
 		}
-		
+
+	}
+
+	private void updateToPayModelList(boolean clear) {
+
+		if (clear) {
+
+			// Clear list (except for default "all" entry) and add new models
+
+			ToPayModel defaultModel = toPayList.stream().filter(m -> m.getType() == ToPayType.All).findFirst().get();
+			toPayList.retainAll(defaultModel);
+
+			for (ImmutablePerson person : projectHolder.getProject().getPersons()) {
+				toPayList.add(new ToPayModel(person));
+			}
+			for (ImmutableGroup group : projectHolder.getProject().getGroups()) {
+				toPayList.add(new ToPayModel(group));
+			}
+
+		} else {
+
+			// Try to retain existing person models
+
+			Set<Integer> remainingPersonIds = projectHolder.getProject().getPersons().stream()
+					.map(data -> data.getId()).collect(toSet());
+			Map<Integer, ToPayModel> modelsByPersonId = toPayList.stream().filter(m -> m.getType() == ToPayType.Person)
+					.collect(toMap(model -> model.getPerson().getId(), model -> model));
+
+			// Remove deleted person models
+			modelsByPersonId.keySet().forEach(id -> {
+				if (!remainingPersonIds.contains(id)) {
+					toPayList.remove(modelsByPersonId.get(id));
+				}
+			});
+
+			// Update and Add person models
+			for (ImmutablePerson person : projectHolder.getProject().getPersons()) {
+				if (modelsByPersonId.containsKey(person.getId())) {
+					// Update
+					modelsByPersonId.get(person.getId()).update(person);
+				} else {
+					// Add
+					toPayList.add(new ToPayModel(person));
+				}
+			}
+
+			// Try to retain existing group models
+
+			Set<Integer> remainingGroupIds = projectHolder.getProject().getGroups().stream().map(data -> data.getId())
+					.collect(toSet());
+			Map<Integer, ToPayModel> modelsByGroupId = toPayList.stream().filter(m -> m.getType() == ToPayType.Group)
+					.collect(toMap(model -> model.getGroup().getId(), model -> model));
+
+			// Remove deleted person models
+			modelsByGroupId.keySet().forEach(id -> {
+				if (!remainingGroupIds.contains(id)) {
+					toPayList.remove(modelsByGroupId.get(id));
+				}
+			});
+
+			// Update and Add person models
+			for (ImmutableGroup group : projectHolder.getProject().getGroups()) {
+				if (modelsByGroupId.containsKey(group.getId())) {
+					// Update
+					modelsByGroupId.get(group.getId()).update(group);
+				} else {
+					// Add
+					toPayList.add(new ToPayModel(group));
+				}
+			}
+
+		}
+
 	}
 
 	/*
