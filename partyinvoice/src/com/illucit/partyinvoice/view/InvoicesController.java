@@ -228,7 +228,7 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
-	private static final Pattern pricePattern = Pattern.compile("^\\s*([0-9]*)([,.][0-9]{0,2})?(\\s*€?)?\\s*$");
+	private static final Pattern pricePattern = Pattern.compile("^\\s*(-?)\\s*([0-9]*)([,.][0-9]{0,2})?(\\s*€?)?\\s*$");
 
 	private static Long resolvePrice(String value) {
 		Matcher priceMatcher = pricePattern.matcher(value);
@@ -236,8 +236,9 @@ public class InvoicesController extends AbstractController {
 			return null;
 		}
 		long price = 0;
-		String sect1 = priceMatcher.group(1);
-		String sect2 = priceMatcher.group(2);
+		String sectMinus = priceMatcher.group(1);
+		String sect1 = priceMatcher.group(2);
+		String sect2 = priceMatcher.group(3);
 		if ((sect1 == null || sect1.isEmpty()) && sect2 == null) {
 			return null;
 		}
@@ -251,6 +252,9 @@ public class InvoicesController extends AbstractController {
 			} else if (sect2.length() == 2) {
 				price += Long.parseLong(sect2);
 			}
+		}
+		if (sectMinus.length() > 0) {
+			price = -price;
 		}
 		return price;
 	}

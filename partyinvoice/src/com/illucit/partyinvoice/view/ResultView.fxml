@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.effect.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.web.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?scenebuilder-stylesheet party.css?>
+
+<AnchorPane prefHeight="600.0" prefWidth="600.0" stylesheets="@party.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.illucit.partyinvoice.view.ResultController">
+   <children>
+      <TableView fx:id="resultTable" layoutX="100.0" layoutY="100.0" prefHeight="600.0" prefWidth="600.0" styleClass="result-table" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <columns>
+            <TableColumn fx:id="nameCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="100.0" prefWidth="250.0" text="%ui.result.cols.name" />
+          <TableColumn fx:id="transactionCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="150.0" text="%ui.result.cols.transaction" />
+          <TableColumn fx:id="amountCol" editable="false" maxWidth="1.7976931348623157E308" minWidth="150.0" prefWidth="150.0" text="%ui.result.cols.amount" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</AnchorPane>

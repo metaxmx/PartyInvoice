@@ -2,3 +2,7 @@
 .root .hyperlink {
 	-fx-border-width: 0px;
 }
+
+.result-table .table-row-cell {
+	-fx-font-size: 20px;
+}

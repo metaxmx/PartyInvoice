@@ -57,6 +57,7 @@ import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.ItemModel;
 import com.illucit.partyinvoice.model.PersonListModel;
 import com.illucit.partyinvoice.model.PersonModel;
+import com.illucit.partyinvoice.model.ResultModel;
 import com.illucit.partyinvoice.model.ToPayModel;
 import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
 import com.illucit.partyinvoice.view.RootController;
@@ -148,6 +149,8 @@ public class PartyInvoiceApp extends Application {
 
 	private ObservableList<ToPayModel> toPayList;
 
+	private ObservableList<ResultModel> resultList;
+
 	/**
 	 * Start program.
 	 * 
@@ -212,6 +215,7 @@ public class PartyInvoiceApp extends Application {
 		invoiceList = FXCollections.observableArrayList();
 		itemList = FXCollections.observableArrayList();
 		toPayList = FXCollections.observableArrayList();
+		resultList = FXCollections.observableArrayList();
 
 		// Add default "All" entry
 		toPayList.add(new ToPayModel());
@@ -312,6 +316,10 @@ public class PartyInvoiceApp extends Application {
 		return toPayList;
 	}
 
+	public ObservableList<ResultModel> getResultList() {
+		return resultList;
+	}
+
 	/**
 	 * Quit program (and show "Save Confirmation" dialog is necessary).
 	 */
@@ -355,6 +363,7 @@ public class PartyInvoiceApp extends Application {
 		updateList(personNameListNullable, getPersonListWithNull(), PersonListModel::new, clear);
 		updateList(invoiceList, projectHolder.getProject().getInvoices(), InvoiceModel::new, clear);
 		updateToPayModelList(clear);
+		updateList(resultList, projectHolder.getProject().getPersons(), ResultModel::new, clear);
 
 		if (this.selectedInvoiceProperty != null) {
 			refreshItemData(this.selectedInvoiceProperty.get(), clear);
