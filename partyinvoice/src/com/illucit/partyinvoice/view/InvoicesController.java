@@ -86,10 +86,10 @@ public class InvoicesController extends AbstractController {
 	private TableColumn<ItemModel, String> itemTotalCol;
 
 	@FXML
-	private TableColumn<ItemModel, String> itemPaidByCol;
+	private TableColumn<ItemModel, PersonListModel> itemPaidByCol;
 
 	@FXML
-	private TableColumn<ItemModel, String> itemToPayCol;
+	private TableColumn<ItemModel, ToPayModel> itemToPayCol;
 
 	@FXML
 	private TextField newItemTitleField;
@@ -156,8 +156,8 @@ public class InvoicesController extends AbstractController {
 		itemPriceCol.setCellValueFactory(new PropertyValueFactory<>("priceCurrency"));
 		itemQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantityString"));
 		itemTotalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
-		itemPaidByCol.setCellValueFactory(new PropertyValueFactory<>("paidByName"));
-		itemToPayCol.setCellValueFactory(new PropertyValueFactory<>("topay"));
+		itemPaidByCol.setCellValueFactory(new PropertyValueFactory<>("paidByModel"));
+		itemToPayCol.setCellValueFactory(new PropertyValueFactory<>("toPayModel"));
 
 		itemTitleCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		itemTitleCol.setOnEditCommit(this::changeItemTitle);
@@ -167,6 +167,12 @@ public class InvoicesController extends AbstractController {
 
 		itemQuantityCol.setCellFactory(TextFieldTableCell.forTableColumn());
 		itemQuantityCol.setOnEditCommit(this::changeItemQuantity);
+
+		itemPaidByCol.setCellFactory(ChoiceBoxTableCell.forTableColumn(app.getPersonNameListNullable()));
+		itemPaidByCol.setOnEditCommit(this::changeItemPaidBy);
+
+		itemToPayCol.setCellFactory(ChoiceBoxTableCell.forTableColumn(app.getToPayList()));
+		itemToPayCol.setOnEditCommit(this::changeItemToPay);
 
 		itemTable.setItems(app.getItemList());
 
@@ -362,6 +368,38 @@ public class InvoicesController extends AbstractController {
 			return;
 		} else {
 			model.quantityProperty().set(newQuantity);
+		}
+		changeItem(model);
+	}
+
+	private void changeItemPaidBy(CellEditEvent<ItemModel, PersonListModel> event) {
+		ItemModel model = event.getRowValue();
+		PersonListModel newPaidBy = event.getNewValue();
+		model.paidbyProperty().set(newPaidBy.getId());
+		changeItem(model);
+	}
+
+	private void changeItemToPay(CellEditEvent<ItemModel, ToPayModel> event) {
+		ItemModel model = event.getRowValue();
+		ToPayModel newToPay = event.getNewValue();
+		switch (newToPay.getType()) {
+		case All:
+			model.personToPayProperty().set(0);
+			model.groupToPayProperty().set(0);
+			break;
+
+		case Person:
+			model.personToPayProperty().set(newToPay.getPerson().getId());
+			model.groupToPayProperty().set(0);
+			break;
+
+		case Group:
+			model.personToPayProperty().set(0);
+			model.groupToPayProperty().set(newToPay.getGroup().getId());
+			break;
+
+		default:
+			break;
 		}
 		changeItem(model);
 	}

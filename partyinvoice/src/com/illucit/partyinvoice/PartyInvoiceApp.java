@@ -15,8 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -102,9 +100,6 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
-	/** Name of the resource bundle. */
-	private static final String BUNDLE_NAME = "partyinvoice";
-
 	public static final String VIEW_ROOT = "RootLayout.fxml";
 	public static final String VIEW_MAIN = "MainLayout.fxml";
 	public static final String VIEW_MESSAGE = "MessageView.fxml";
@@ -122,8 +117,7 @@ public class PartyInvoiceApp extends Application {
 
 	private Logger logger = LoggerFactory.getLogger(PartyInvoiceApp.class.getName());
 
-	private Locale locale = Locale.getDefault();
-	private ResourceBundle bundle;
+	private Localization l10n = Localization.getInstance();
 
 	private Stage primaryStage;
 
@@ -194,10 +188,8 @@ public class PartyInvoiceApp extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		loadResourceBundle();
-
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle(bundle.getString("ui.title"));
+		this.primaryStage.setTitle(l10n.getString("ui.title"));
 		this.primaryStage.getIcons().add(new Image("icons/icon-16.png"));
 		this.primaryStage.getIcons().add(new Image("icons/icon-24.png"));
 		this.primaryStage.getIcons().add(new Image("icons/icon-32.png"));
@@ -221,7 +213,8 @@ public class PartyInvoiceApp extends Application {
 		itemList = FXCollections.observableArrayList();
 		toPayList = FXCollections.observableArrayList();
 
-		toPayList.add(new ToPayModel()); // Add default "All entry"
+		// Add default "All" entry
+		toPayList.add(new ToPayModel());
 
 		initializeProject();
 
@@ -239,11 +232,8 @@ public class PartyInvoiceApp extends Application {
 	 *            target locale
 	 */
 	public void changeLocale(Locale locale) {
-
-		this.locale = locale;
-		System.out.println("Locale: " + locale);
-		loadResourceBundle();
-
+		l10n.changeLocale(locale);
+		loadedViews.clear();
 		initUi();
 	}
 
@@ -251,7 +241,7 @@ public class PartyInvoiceApp extends Application {
 	 * Initialize UI.
 	 */
 	private void initUi() {
-		rootLayout = loadFxml(this, VIEW_ROOT, RootController.class, (controller, bundle) -> {
+		rootLayout = loadFxml(this, VIEW_ROOT, RootController.class, (controller) -> {
 			rootController = controller;
 		});
 
@@ -273,36 +263,6 @@ public class PartyInvoiceApp extends Application {
 
 	public SelectedView getView() {
 		return view;
-	}
-
-	/**
-	 * Load resource bundle from current locale.
-	 */
-	private void loadResourceBundle() {
-		bundle = null;
-		try {
-			bundle = ResourceBundle.getBundle(BUNDLE_NAME, this.locale);
-		} catch (MissingResourceException e) {
-		}
-		if (bundle == null) {
-			// Fallback
-			try {
-				bundle = ResourceBundle.getBundle(BUNDLE_NAME, Locale.ENGLISH);
-			} catch (MissingResourceException e) {
-			}
-		}
-		if (bundle == null) {
-			throw new IllegalStateException("Resource bundle " + BUNDLE_NAME + " was not found.");
-		}
-	}
-
-	/**
-	 * Get the resource bundle.
-	 * 
-	 * @return resource bundle
-	 */
-	public ResourceBundle getBundle() {
-		return bundle;
 	}
 
 	/**
@@ -447,7 +407,7 @@ public class PartyInvoiceApp extends Application {
 	private void loadProject() {
 
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle(bundle.getString("ui.load.title"));
+		fileChooser.setTitle(l10n.getString("ui.load.title"));
 		File loadFile = fileChooser.showOpenDialog(primaryStage);
 
 		if (loadFile == null) {
@@ -501,7 +461,7 @@ public class PartyInvoiceApp extends Application {
 	public boolean saveAsProject() {
 
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle(bundle.getString("ui.saveas.title"));
+		fileChooser.setTitle(l10n.getString("ui.saveas.title"));
 		File saveFile = fileChooser.showSaveDialog(primaryStage);
 
 		if (saveFile == null) {

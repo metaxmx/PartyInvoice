@@ -1,7 +1,6 @@
 package com.illucit.partyinvoice;
 
 import java.io.IOException;
-import java.util.ResourceBundle;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -32,10 +31,10 @@ public class FxmlHelper {
 
 		logger.info("Loading FXML file " + VIEW_PREFIX + view);
 
-		ResourceBundle bundle = app.getBundle();
+		Localization l10n = Localization.getInstance();
 
 		FXMLLoader loader = new FXMLLoader();
-		loader.setResources(bundle);
+		loader.setResources(l10n.getBundle());
 		loader.setLocation(FxmlHelper.class.getResource(VIEW_PREFIX + view));
 
 		if (loader.getLocation() == null) {
@@ -62,7 +61,7 @@ public class FxmlHelper {
 		}
 
 		if (handler != null) {
-			handler.handleDocument(controller, bundle);
+			handler.handleDocument(controller);
 		}
 
 		return viewParent;
@@ -112,10 +111,10 @@ public class FxmlHelper {
 
 		logger.info("Loading FXML file " + VIEW_PREFIX + view);
 
-		ResourceBundle bundle = app.getBundle();
+		Localization l10n = Localization.getInstance();
 
 		FXMLLoader loader = new FXMLLoader();
-		loader.setResources(bundle);
+		loader.setResources(l10n.getBundle());
 		loader.setLocation(FxmlHelper.class.getResource(VIEW_PREFIX + view));
 
 		if (loader.getLocation() == null) {
@@ -134,7 +133,7 @@ public class FxmlHelper {
 		}
 
 		Stage stage = new Stage();
-		stage.setTitle(bundle.getString(titleKey));
+		stage.setTitle(l10n.getString(titleKey));
 		stage.setScene(new Scene(viewParent));
 
 		// Give the controller access to the main app.
@@ -146,7 +145,7 @@ public class FxmlHelper {
 		}
 
 		if (handler != null) {
-			handler.handleStage(stage, controller, bundle);
+			handler.handleStage(stage, controller);
 		}
 
 		return stage;
@@ -155,14 +154,14 @@ public class FxmlHelper {
 	@FunctionalInterface
 	public static interface StageHandler<C> {
 
-		public void handleStage(Stage stage, C controller, ResourceBundle bundle);
+		public void handleStage(Stage stage, C controller);
 
 	}
 
 	@FunctionalInterface
 	public static interface InnerDocumentHandler<C> {
 
-		public void handleDocument(C controller, ResourceBundle bundle);
+		public void handleDocument(C controller);
 
 	}
 

@@ -1,5 +1,6 @@
 package com.illucit.partyinvoice.model;
 
+import com.illucit.partyinvoice.Localization;
 import com.illucit.partyinvoice.immutabledata.ImmutableGroup;
 import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
@@ -56,7 +57,7 @@ public class ToPayModel {
 	public String getTitle() {
 		switch (getType()) {
 		case All:
-			return "All";
+			return Localization.getInstance().getString("ui.topay.all");
 
 		case Person:
 			return person.getName();

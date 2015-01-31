@@ -4,6 +4,7 @@ import static com.illucit.partyinvoice.util.CurrencyUtil.currencyToString;
 import static com.illucit.partyinvoice.util.Integers.nullToZero;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import com.illucit.partyinvoice.immutabledata.ImmutableItem;
@@ -26,11 +27,13 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 
 	private final SimpleStringProperty paidByNameProperty = new SimpleStringProperty();
 
-	private final SimpleStringProperty topayProperty = new SimpleStringProperty();
+	private final SimpleObjectProperty<PersonListModel> paidByModelProperty = new SimpleObjectProperty<>();
 
 	private final SimpleIntegerProperty personToPayProperty = new SimpleIntegerProperty();
 
 	private final SimpleIntegerProperty groupToPayProperty = new SimpleIntegerProperty();
+
+	private final SimpleObjectProperty<ToPayModel> toPayModelProperty = new SimpleObjectProperty<>();
 
 	public ItemModel(ImmutableItem item) {
 		super(item);
@@ -46,17 +49,19 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 		quantityStringProperty.set("" + item.getQuantity());
 		totalProperty.set(currencyToString(item.getTotal()));
 		paidbyProperty.set(item.getPaidBy() == null ? 0 : item.getPaidBy());
+		paidByNameProperty.set(item.getGetPaidByPerson() == null ? "" : item.getGetPaidByPerson().getName());
+		paidByModelProperty.set(item.getGetPaidByPerson() == null ? null : new PersonListModel(item
+				.getGetPaidByPerson()));
 		personToPayProperty.set(nullToZero(item.getPersonToPay()));
 		groupToPayProperty.set(nullToZero(item.getGroupToPay()));
-		paidByNameProperty.set(item.getGetPaidByPerson() == null ? "" : item.getGetPaidByPerson().getName());
 
-		String toPayTitle = "All";
+		ToPayModel toPay = new ToPayModel();
 		if (item.getPersonToPayPerson() != null) {
-			toPayTitle = item.getPersonToPayPerson().getName();
+			toPay = new ToPayModel(item.getPersonToPayPerson());
 		} else if (item.getGroupToPayGroup() != null) {
-			toPayTitle = item.getGroupToPayGroup().getName();
+			toPay = new ToPayModel(item.getGroupToPayGroup());
 		}
-		topayProperty.set(toPayTitle);
+		toPayModelProperty.set(toPay);
 	}
 
 	public SimpleStringProperty titleProperty() {
@@ -99,8 +104,12 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 		return paidByNameProperty;
 	}
 
-	public SimpleStringProperty topayProperty() {
-		return topayProperty;
+	public SimpleObjectProperty<PersonListModel> paidByModelProperty() {
+		return paidByModelProperty;
+	}
+
+	public SimpleObjectProperty<ToPayModel> toPayModelProperty() {
+		return toPayModelProperty;
 	}
 
 }

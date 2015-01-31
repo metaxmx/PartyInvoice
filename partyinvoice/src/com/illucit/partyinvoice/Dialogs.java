@@ -3,9 +3,6 @@ package com.illucit.partyinvoice;
 import static com.illucit.partyinvoice.FxmlHelper.loadFxmlStage;
 import static com.illucit.partyinvoice.PartyInvoiceApp.VIEW_MESSAGE;
 import static com.illucit.partyinvoice.PartyInvoiceApp.VIEW_SAVECONFIRM;
-
-import java.util.ResourceBundle;
-
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -47,16 +44,16 @@ public class Dialogs {
 	 *            i18n key to show as message
 	 */
 	public void showMessage(String messageTitleKey, String messageKey) {
+		Localization l10n = Localization.getInstance();
 		Stage messageStage = loadFxmlStage(app, VIEW_MESSAGE, messageTitleKey, MessageController.class, (stage,
-				controller, bundle) -> {
-			controller.setMessage(bundle.getString(messageKey));
+				controller) -> {
+			controller.setMessage(l10n.getString(messageKey));
 			controller.setStage(stage);
 		});
 		if (messageStage == null) {
 			// Error loading FXML
-			ResourceBundle bundle = app.getBundle();
-			logger.warn("Error showing the following message: {} - {}", bundle.getString(messageTitleKey),
-					bundle.getString(messageKey));
+			logger.warn("Error showing the following message: {} - {}", l10n.getString(messageTitleKey),
+					l10n.getString(messageKey));
 			return;
 		}
 
@@ -82,7 +79,7 @@ public class Dialogs {
 		}
 
 		Stage cStage = loadFxmlStage(app, VIEW_SAVECONFIRM, "ui.saveconfirm.title", SaveConfirmController.class, (
-				stage, controller, bundle) -> {
+				stage, controller) -> {
 			controller.setCallback(result -> {
 				stage.close();
 				if (result == ConfirmResult.DISCARD) {
