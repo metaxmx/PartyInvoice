@@ -1,12 +1,12 @@
 package com.illucit.partyinvoice.model;
 
-import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
+import static com.illucit.partyinvoice.util.CurrencyUtil.currencyToString;
 import javafx.beans.property.SimpleStringProperty;
 
 import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
 /**
- * Model for a person
+ * Model for a person.
  * 
  * @author Christian Simon
  *

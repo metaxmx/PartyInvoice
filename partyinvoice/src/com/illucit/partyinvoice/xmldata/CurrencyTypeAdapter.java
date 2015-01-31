@@ -2,7 +2,7 @@ package com.illucit.partyinvoice.xmldata;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-import com.illucit.partyinvoice.CurrencyUtil;
+import com.illucit.partyinvoice.util.CurrencyUtil;
 
 /**
  * Type adapter to store currency values as String.

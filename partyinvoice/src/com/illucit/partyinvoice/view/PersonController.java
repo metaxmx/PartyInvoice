@@ -3,9 +3,11 @@ package com.illucit.partyinvoice.view;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 
@@ -48,6 +50,9 @@ public class PersonController extends AbstractController {
 		shareCol.setCellValueFactory(new PropertyValueFactory<>("share"));
 		diffCol.setCellValueFactory(new PropertyValueFactory<>("difference"));
 
+		nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		nameCol.setOnEditCommit(this::editPersonNameEvent);
+
 		personTable.setItems(app.getPersonList());
 
 		addPersonButton.disableProperty().bind(newPersonField.textProperty().isEmpty());
@@ -62,11 +67,35 @@ public class PersonController extends AbstractController {
 		newPersonField.textProperty().set("");
 	}
 
+	private void editPersonNameEvent(CellEditEvent<PersonModel, String> event) {
+		PersonModel model = event.getRowValue();
+		String newName = event.getNewValue();
+		if (newName.isEmpty()) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.nameProperty().set(newName);
+		}
+		getApp().changePerson(model.getId(), model.nameProperty().get());
+	}
+
 	@FXML
 	public void deletePerson() {
 		PersonModel selectedModel = personTable.selectionModelProperty().get().selectedItemProperty().get();
 		if (selectedModel != null) {
 			getApp().deletePerson(selectedModel.getId());
+		}
+	}
+
+	@FXML
+	public void onCreateFieldKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.ENTER) {
+			if (!addPersonButton.isDisabled()) {
+				addNewPerson();
+			}
+			return;
 		}
 	}
 

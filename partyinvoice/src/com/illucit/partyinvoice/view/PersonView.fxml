@@ -20,7 +20,7 @@
         </rowConstraints>
          <children>
             <Label maxWidth="1.7976931348623157E308" text="%ui.persons.label.name" GridPane.halignment="LEFT" GridPane.valignment="CENTER" />
-            <TextField fx:id="newPersonField" maxWidth="1.7976931348623157E308" minWidth="-Infinity" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
+            <TextField fx:id="newPersonField" maxWidth="1.7976931348623157E308" minWidth="-Infinity" onKeyPressed="#onCreateFieldKeyPressed" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
             <Button fx:id="addPersonButton" defaultButton="true" disable="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#addNewPerson" text="%ui.persons.btn.add" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
          </children>
       </GridPane>

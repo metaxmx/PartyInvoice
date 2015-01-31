@@ -2,15 +2,16 @@ package com.illucit.partyinvoice;
 
 import static com.illucit.partyinvoice.FxmlHelper.loadFxml;
 import static com.illucit.partyinvoice.FxmlHelper.loadFxmlStage;
-import static com.illucit.partyinvoice.LogSetup.setupLogging;
 import static com.illucit.partyinvoice.XmlIO.loadFromFile;
 import static com.illucit.partyinvoice.XmlIO.saveToFile;
+import static com.illucit.partyinvoice.util.LogSetup.setupLogging;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static javafx.stage.WindowEvent.WINDOW_CLOSE_REQUEST;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -47,12 +48,16 @@ import com.illucit.partyinvoice.immutabledata.ImmutableProjectHolder;
 import com.illucit.partyinvoice.immutabledata.operation.AddInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddItemOp;
 import com.illucit.partyinvoice.immutabledata.operation.AddPersonOp;
+import com.illucit.partyinvoice.immutabledata.operation.ChangeInvoiceOp;
+import com.illucit.partyinvoice.immutabledata.operation.ChangeItemOp;
+import com.illucit.partyinvoice.immutabledata.operation.ChangePersonOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelInvoiceOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelItemOp;
 import com.illucit.partyinvoice.immutabledata.operation.DelPersonOp;
 import com.illucit.partyinvoice.model.BaseModel;
 import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.ItemModel;
+import com.illucit.partyinvoice.model.PersonListModel;
 import com.illucit.partyinvoice.model.PersonModel;
 import com.illucit.partyinvoice.model.ToPayModel;
 import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
@@ -67,8 +72,24 @@ import com.illucit.partyinvoice.xmldata.XmlProject;
  */
 public class PartyInvoiceApp extends Application {
 
+	/**
+	 * Enum for the selected right-side view in the main window.
+	 * 
+	 * @author Christian Simon
+	 *
+	 */
 	public enum SelectedView {
-		Welcome(VIEW_WELCOME), Persons(VIEW_PERSONS), Invoices(VIEW_INVOICES), Result(VIEW_RESULT);
+		/** Welcome page */
+		Welcome(VIEW_WELCOME),
+
+		/** Person list */
+		Persons(VIEW_PERSONS),
+
+		/** Invoices / Items */
+		Invoices(VIEW_INVOICES),
+
+		/** Result list */
+		Result(VIEW_RESULT);
 
 		private final String view;
 
@@ -81,6 +102,7 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
+	/** Name of the resource bundle. */
 	private static final String BUNDLE_NAME = "partyinvoice";
 
 	public static final String VIEW_ROOT = "RootLayout.fxml";
@@ -119,6 +141,10 @@ public class PartyInvoiceApp extends Application {
 	private boolean changed = false;
 
 	private ObservableList<PersonModel> personList;
+
+	private ObservableList<PersonListModel> personNameList;
+
+	private ObservableList<PersonListModel> personNameListNullable;
 
 	private ObservableList<InvoiceModel> invoiceList;
 
@@ -189,6 +215,8 @@ public class PartyInvoiceApp extends Application {
 		});
 
 		personList = FXCollections.observableArrayList();
+		personNameList = FXCollections.observableArrayList();
+		personNameListNullable = FXCollections.observableArrayList();
 		invoiceList = FXCollections.observableArrayList();
 		itemList = FXCollections.observableArrayList();
 		toPayList = FXCollections.observableArrayList();
@@ -299,6 +327,14 @@ public class PartyInvoiceApp extends Application {
 		return personList;
 	}
 
+	public ObservableList<PersonListModel> getPersonNameList() {
+		return personNameList;
+	}
+
+	public ObservableList<PersonListModel> getPersonNameListNullable() {
+		return personNameListNullable;
+	}
+
 	public ObservableList<InvoiceModel> getInvoiceList() {
 		return invoiceList;
 	}
@@ -355,6 +391,8 @@ public class PartyInvoiceApp extends Application {
 
 	private void refreshObserableData(boolean clear) {
 		updateList(personList, projectHolder.getProject().getPersons(), PersonModel::new, clear);
+		updateList(personNameList, projectHolder.getProject().getPersons(), PersonListModel::new, clear);
+		updateList(personNameListNullable, getPersonListWithNull(), PersonListModel::new, clear);
 		updateList(invoiceList, projectHolder.getProject().getInvoices(), InvoiceModel::new, clear);
 		updateToPayModelList(clear);
 
@@ -363,6 +401,15 @@ public class PartyInvoiceApp extends Application {
 		}
 
 		updateUndoRedo();
+	}
+
+	private List<ImmutablePerson> getPersonListWithNull() {
+		// Add pseudo person wiothout name and with id 0 to emulate "null" entry
+		ImmutablePerson nullPerson = new ImmutablePerson(0, "", 0, 0);
+		LinkedList<ImmutablePerson> result = new LinkedList<>();
+		result.add(nullPerson);
+		result.addAll(projectHolder.getProject().getPersons());
+		return result;
 	}
 
 	private void refreshItemData(InvoiceModel model, boolean clear) {
@@ -618,12 +665,20 @@ public class PartyInvoiceApp extends Application {
 		performOperation(new AddPersonOp(name));
 	}
 
+	public void changePerson(int id, String newName) {
+		performOperation(new ChangePersonOp(id, newName));
+	}
+
 	public void deletePerson(int id) {
 		performOperation(new DelPersonOp(id));
 	}
 
 	public void addInvoice(String title, int paidBy) {
 		performOperation(new AddInvoiceOp(title, paidBy));
+	}
+
+	public void changeInvoice(int id, String newTitle, int paidBy) {
+		performOperation(new ChangeInvoiceOp(id, newTitle, paidBy));
 	}
 
 	public void deleteInvoice(int id) {
@@ -636,6 +691,11 @@ public class PartyInvoiceApp extends Application {
 			return;
 		}
 		performOperation(new AddItemOp(selectedInvoice.getId(), title, price, quantity, paidBy, personToPay, groupToPay));
+	}
+
+	public void changeItem(int id, String title, long price, int quantity, Integer paidBy, Integer personToPay,
+			Integer groupToPay) {
+		performOperation(new ChangeItemOp(id, title, price, quantity, paidBy, personToPay, groupToPay));
 	}
 
 	public void deleteItem(int id) {

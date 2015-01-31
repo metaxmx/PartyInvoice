@@ -1,7 +1,9 @@
 package com.illucit.partyinvoice.model;
 
-import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
+import static com.illucit.partyinvoice.util.CurrencyUtil.currencyToString;
+import static com.illucit.partyinvoice.util.Integers.nullToZero;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 import com.illucit.partyinvoice.immutabledata.ImmutableItem;
@@ -10,9 +12,13 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 
 	private final SimpleStringProperty titleProperty = new SimpleStringProperty();
 
-	private final SimpleStringProperty priceProperty = new SimpleStringProperty();
+	private final SimpleLongProperty priceProperty = new SimpleLongProperty();
+
+	private final SimpleStringProperty priceCurrencyProperty = new SimpleStringProperty();
 
 	private final SimpleIntegerProperty quantityProperty = new SimpleIntegerProperty();
+
+	private final SimpleStringProperty quantityStringProperty = new SimpleStringProperty();
 
 	private final SimpleStringProperty totalProperty = new SimpleStringProperty();
 
@@ -22,6 +28,10 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 
 	private final SimpleStringProperty topayProperty = new SimpleStringProperty();
 
+	private final SimpleIntegerProperty personToPayProperty = new SimpleIntegerProperty();
+
+	private final SimpleIntegerProperty groupToPayProperty = new SimpleIntegerProperty();
+
 	public ItemModel(ImmutableItem item) {
 		super(item);
 		update(item);
@@ -30,10 +40,14 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 	@Override
 	public void update(ImmutableItem item) {
 		titleProperty.set(item.getTitle());
-		priceProperty.set(currencyToString(item.getPrice()));
+		priceProperty.set(item.getPrice());
+		priceCurrencyProperty.set(currencyToString(item.getPrice()));
 		quantityProperty.set(item.getQuantity());
+		quantityStringProperty.set("" + item.getQuantity());
 		totalProperty.set(currencyToString(item.getTotal()));
 		paidbyProperty.set(item.getPaidBy() == null ? 0 : item.getPaidBy());
+		personToPayProperty.set(nullToZero(item.getPersonToPay()));
+		groupToPayProperty.set(nullToZero(item.getGroupToPay()));
 		paidByNameProperty.set(item.getGetPaidByPerson() == null ? "" : item.getGetPaidByPerson().getName());
 
 		String toPayTitle = "All";
@@ -49,12 +63,20 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 		return titleProperty;
 	}
 
-	public SimpleStringProperty priceProperty() {
+	public SimpleLongProperty priceProperty() {
 		return priceProperty;
+	}
+
+	public SimpleStringProperty priceCurrencyProperty() {
+		return priceCurrencyProperty;
 	}
 
 	public SimpleIntegerProperty quantityProperty() {
 		return quantityProperty;
+	}
+
+	public SimpleStringProperty quantityStringProperty() {
+		return quantityStringProperty;
 	}
 
 	public SimpleStringProperty totalProperty() {
@@ -63,6 +85,14 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 
 	public SimpleIntegerProperty paidbyProperty() {
 		return paidbyProperty;
+	}
+
+	public SimpleIntegerProperty personToPayProperty() {
+		return personToPayProperty;
+	}
+
+	public SimpleIntegerProperty groupToPayProperty() {
+		return groupToPayProperty;
 	}
 
 	public SimpleStringProperty paidByNameProperty() {

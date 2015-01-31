@@ -1,4 +1,4 @@
-package com.illucit.partyinvoice;
+package com.illucit.partyinvoice.util;
 
 import java.io.File;
 import java.io.IOException;

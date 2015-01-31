@@ -3,6 +3,8 @@ package com.illucit.partyinvoice;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.illucit.partyinvoice.util.CurrencyUtil;
+
 /**
  * Test currency conversion.
  * 

@@ -1,8 +1,9 @@
 package com.illucit.partyinvoice.view;
 
-import static com.illucit.partyinvoice.CurrencyUtil.currencyToString;
-import static com.illucit.partyinvoice.ExtendedBindings.conditionBinding;
-import static com.illucit.partyinvoice.ExtendedBindings.resolvingBinding;
+import static com.illucit.partyinvoice.util.CurrencyUtil.currencyToString;
+import static com.illucit.partyinvoice.util.ExtendedBindings.conditionBinding;
+import static com.illucit.partyinvoice.util.ExtendedBindings.resolvingBinding;
+import static com.illucit.partyinvoice.util.Integers.zeroToNull;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,16 +12,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 
 import com.illucit.partyinvoice.AbstractController;
 import com.illucit.partyinvoice.PartyInvoiceApp;
 import com.illucit.partyinvoice.model.InvoiceModel;
 import com.illucit.partyinvoice.model.ItemModel;
-import com.illucit.partyinvoice.model.PersonModel;
+import com.illucit.partyinvoice.model.PersonListModel;
 import com.illucit.partyinvoice.model.ToPayModel;
 import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
 
@@ -37,7 +43,7 @@ public class InvoicesController extends AbstractController {
 	private TableColumn<InvoiceModel, String> invoiceTitleCol;
 
 	@FXML
-	private TableColumn<InvoiceModel, String> invoicePaidByCol;
+	private TableColumn<InvoiceModel, PersonListModel> invoicePaidByCol;
 
 	@FXML
 	private TableColumn<InvoiceModel, String> invoiceItemsCol;
@@ -49,7 +55,7 @@ public class InvoicesController extends AbstractController {
 	private TextField newInvoiceTitleField;
 
 	@FXML
-	private ChoiceBox<PersonModel> newInvoicePaidByField;
+	private ChoiceBox<PersonListModel> newInvoicePaidByField;
 
 	@FXML
 	private Button addInvoiceButton;
@@ -74,7 +80,7 @@ public class InvoicesController extends AbstractController {
 	private TableColumn<ItemModel, String> itemPriceCol;
 
 	@FXML
-	private TableColumn<ItemModel, Integer> itemQuantityCol;
+	private TableColumn<ItemModel, String> itemQuantityCol;
 
 	@FXML
 	private TableColumn<ItemModel, String> itemTotalCol;
@@ -98,7 +104,7 @@ public class InvoicesController extends AbstractController {
 	private TextField newItemTotalField;
 
 	@FXML
-	private ChoiceBox<PersonModel> newItemPaidByField;
+	private ChoiceBox<PersonListModel> newItemPaidByField;
 
 	@FXML
 	private ChoiceBox<ToPayModel> newItemToPayField;
@@ -118,13 +124,19 @@ public class InvoicesController extends AbstractController {
 		 */
 
 		invoiceTitleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-		invoicePaidByCol.setCellValueFactory(new PropertyValueFactory<>("paidByName"));
+		invoicePaidByCol.setCellValueFactory(new PropertyValueFactory<>("paidByModel"));
 		invoiceItemsCol.setCellValueFactory(new PropertyValueFactory<>("items"));
 		invoiceTotalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
 
+		invoiceTitleCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		invoiceTitleCol.setOnEditCommit(this::changeInvoiceTitle);
+
+		invoicePaidByCol.setCellFactory(ChoiceBoxTableCell.forTableColumn(app.getPersonNameList()));
+		invoicePaidByCol.setOnEditCommit(this::changeInvoicePaidBy);
+
 		invoicesTable.setItems(app.getInvoiceList());
 
-		newInvoicePaidByField.setItems(app.getPersonList());
+		newInvoicePaidByField.setItems(app.getPersonNameList());
 
 		addInvoiceButton.disableProperty().bind(
 				newInvoiceTitleField.textProperty().isEmpty()
@@ -141,15 +153,25 @@ public class InvoicesController extends AbstractController {
 		itemAnchorPane.visibleProperty().bind(invoicesTable.getSelectionModel().selectedItemProperty().isNotNull());
 
 		itemTitleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
-		itemPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
-		itemQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantity"));
+		itemPriceCol.setCellValueFactory(new PropertyValueFactory<>("priceCurrency"));
+		itemQuantityCol.setCellValueFactory(new PropertyValueFactory<>("quantityString"));
 		itemTotalCol.setCellValueFactory(new PropertyValueFactory<>("total"));
 		itemPaidByCol.setCellValueFactory(new PropertyValueFactory<>("paidByName"));
 		itemToPayCol.setCellValueFactory(new PropertyValueFactory<>("topay"));
 
+		itemTitleCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		itemTitleCol.setOnEditCommit(this::changeItemTitle);
+
+		itemPriceCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		itemPriceCol.setOnEditCommit(this::changeItemPrice);
+
+		itemQuantityCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		itemQuantityCol.setOnEditCommit(this::changeItemQuantity);
+
 		itemTable.setItems(app.getItemList());
 
-		newItemPaidByField.setItems(app.getPersonList());
+		newItemPaidByField.setItems(app.getPersonNameListNullable());
+		newItemPaidByField.getSelectionModel().selectFirst();
 
 		newItemToPayField.setItems(app.getToPayList());
 		newItemToPayField.getSelectionModel().selectFirst();
@@ -236,6 +258,34 @@ public class InvoicesController extends AbstractController {
 		newInvoicePaidByField.getSelectionModel().clearSelection();
 	}
 
+	private void changeInvoiceTitle(CellEditEvent<InvoiceModel, String> event) {
+		InvoiceModel model = event.getRowValue();
+		String newTitle = event.getNewValue();
+		if (newTitle.isEmpty()) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.titleProperty().set(newTitle);
+		}
+		getApp().changeInvoice(model.getId(), model.titleProperty().get(), model.paidByProperty().get());
+	}
+
+	private void changeInvoicePaidBy(CellEditEvent<InvoiceModel, PersonListModel> event) {
+		InvoiceModel model = event.getRowValue();
+		PersonListModel newPerson = event.getNewValue();
+		if (newPerson == null) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.paidByProperty().set(newPerson.getId());
+		}
+		getApp().changeInvoice(model.getId(), model.titleProperty().get(), model.paidByProperty().get());
+	}
+
 	@FXML
 	public void deleteInvoice() {
 		InvoiceModel selectedModel = invoicesTable.selectionModelProperty().get().selectedItemProperty().get();
@@ -250,7 +300,7 @@ public class InvoicesController extends AbstractController {
 		Integer quantity = resolveQuantity(newItemQuantityField.getText());
 		Long price = resolvePrice(newItemPriceField.getText());
 		Integer paidBy = null;
-		if (!newItemPaidByField.getSelectionModel().isEmpty()) {
+		if (!newItemPaidByField.getSelectionModel().isEmpty() && newItemPaidByField.getValue().getId() > 0) {
 			paidBy = newItemPaidByField.getValue().getId();
 		}
 		Integer personToPay = null;
@@ -268,8 +318,58 @@ public class InvoicesController extends AbstractController {
 		newItemTitleField.textProperty().set("");
 		newItemQuantityField.textProperty().set("");
 		newItemPriceField.textProperty().set("");
-		newItemPaidByField.getSelectionModel().clearSelection();
+		newItemPaidByField.getSelectionModel().selectFirst();
 		newItemToPayField.getSelectionModel().selectFirst();
+		newItemTitleField.requestFocus();
+	}
+
+	private void changeItemTitle(CellEditEvent<ItemModel, String> event) {
+		ItemModel model = event.getRowValue();
+		String newTitle = event.getNewValue();
+		if (newTitle.isEmpty()) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.titleProperty().set(newTitle);
+		}
+		changeItem(model);
+	}
+
+	private void changeItemPrice(CellEditEvent<ItemModel, String> event) {
+		ItemModel model = event.getRowValue();
+		Long newPrice = resolvePrice(event.getNewValue());
+
+		if (newPrice == null) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.priceProperty().set(newPrice);
+		}
+		changeItem(model);
+	}
+
+	private void changeItemQuantity(CellEditEvent<ItemModel, String> event) {
+		ItemModel model = event.getRowValue();
+		Integer newQuantity = resolveQuantity(event.getNewValue());
+		if (newQuantity == null) {
+			// Enforce Redraw
+			event.getTableColumn().setVisible(false);
+			event.getTableColumn().setVisible(true);
+			return;
+		} else {
+			model.quantityProperty().set(newQuantity);
+		}
+		changeItem(model);
+	}
+
+	private void changeItem(ItemModel model) {
+		getApp().changeItem(model.getId(), model.titleProperty().get(), model.priceProperty().get(),
+				model.quantityProperty().get(), zeroToNull(model.paidbyProperty().get()),
+				zeroToNull(model.personToPayProperty().get()), zeroToNull(model.groupToPayProperty().get()));
 	}
 
 	@FXML
@@ -277,6 +377,52 @@ public class InvoicesController extends AbstractController {
 		ItemModel selectedModel = itemTable.selectionModelProperty().get().selectedItemProperty().get();
 		if (selectedModel != null) {
 			getApp().deleteItem(selectedModel.getId());
+		}
+	}
+
+	@FXML
+	public void onCreateInvoiceFieldKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.ENTER) {
+			if (!addInvoiceButton.isDisabled()) {
+				addNewInvoice();
+			}
+			return;
+		}
+	}
+
+	@FXML
+	public void onInvoiceTableKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.DELETE) {
+			deleteInvoice();
+			return;
+		}
+		if (event.getCode() == KeyCode.ESCAPE) {
+			invoicesTable.getSelectionModel().clearSelection();
+			newInvoiceTitleField.requestFocus();
+			return;
+		}
+	}
+
+	@FXML
+	public void onCreateItemFieldKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.ENTER) {
+			if (!addItemButton.isDisabled()) {
+				addNewItem();
+			}
+			return;
+		}
+	}
+
+	@FXML
+	public void onItemTableKeyPressed(KeyEvent event) {
+		if (event.getCode() == KeyCode.DELETE) {
+			deletetem();
+			return;
+		}
+		if (event.getCode() == KeyCode.ESCAPE) {
+			itemTable.getSelectionModel().clearSelection();
+			newItemTitleField.requestFocus();
+			return;
 		}
 	}
 }

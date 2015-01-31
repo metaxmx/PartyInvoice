@@ -1,4 +1,4 @@
-package com.illucit.partyinvoice;
+package com.illucit.partyinvoice.util;
 
 import java.util.function.BiFunction;
 import java.util.function.Function;
