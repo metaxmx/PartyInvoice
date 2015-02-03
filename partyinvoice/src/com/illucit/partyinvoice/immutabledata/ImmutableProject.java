@@ -83,6 +83,7 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	 * Copy constructor (Loading from XML).
 	 * 
 	 * @param project
+	 *            xml project as source
 	 */
 	public ImmutableProject(XmlProject project) {
 		this(project.getTitle(), getPersonList(project), getGroupList(project), getInvoiceList(project));
@@ -254,8 +255,8 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 					continue;
 				}
 			}
-			invoices.add(new InvoiceDTO(invoice.getId(), invoice.getTitle(), invoice.getPaidBy(), getItemList(
-					project, invoice, operation)));
+			invoices.add(new InvoiceDTO(invoice.getId(), invoice.getTitle(), invoice.getPaidBy(), getItemList(project,
+					invoice, operation)));
 		}
 		if (operation instanceof AddInvoiceOp) {
 			int nextAddInvoiceId = 1 + project.getInvoices().stream().mapToInt(Invoice::getId).max().orElse(0);

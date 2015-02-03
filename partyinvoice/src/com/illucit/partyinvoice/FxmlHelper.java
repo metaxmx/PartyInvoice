@@ -79,9 +79,7 @@ public class FxmlHelper {
 	 *            {@link #VIEW_PREFIX} in the same package of this class)
 	 * @param titleKey
 	 *            the message key to be used for the stage
-	 * @param <C>
-	 *            Controller type
-	 * @return the created stage or null, of the loading the FXML failed
+	 * @return the created stage or null, if the loading of the FXML failed
 	 */
 	public static Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey) {
 		return loadFxmlStage(app, view, titleKey, Object.class, null);
@@ -104,7 +102,9 @@ public class FxmlHelper {
 	 * @param handler
 	 *            handle to be called when the FXML and the controller are
 	 *            loaded
-	 * @return the created stage or null, of the loading the FXML failed
+	 * @param <C>
+	 *            controller class
+	 * @return the created stage or null, if the loading of the FXML failed
 	 */
 	public static <C> Stage loadFxmlStage(PartyInvoiceApp app, String view, String titleKey, Class<C> controllerClass,
 			StageHandler<C> handler) {

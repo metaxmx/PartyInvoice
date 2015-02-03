@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>com.illucit</groupId>
 		<artifactId>illucit-parent</artifactId>
-		<version>1</version>
+		<version>2</version>
 	</parent>
 
 	<artifactId>partyinvoice</artifactId>
@@ -16,12 +16,20 @@
 
 	<name>Party Invoice</name>
 	<description>System to calculate the money flows of the costs of a party or event.</description>
-	<url>http://www.kahl-com.de/partyinvoice/</url>
+	<url>http://projects.illucit.com/partyinvoice</url>
 
 	<organization>
 		<name>illucIT Software GmbH</name>
 		<url>http://www.illucit.com</url>
 	</organization>
+
+	<licenses>
+		<license>
+			<name>lgpl</name>
+			<url>http://repository.illucit.com/licenses/lgpl-2.1-standalone.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
 	<properties>
 		<!-- Target Java Compatibility -->
@@ -35,7 +43,7 @@
 		<!-- Define the version of Loggers -->
 		<version.slf4j>1.7.2</version.slf4j>
 		<version.log4j>1.2.17</version.log4j>
-		
+
 		<!-- Guava -->
 		<version.guava>18.0</version.guava>
 	</properties>
@@ -102,6 +110,7 @@
 				<configuration>
 					<mainClass>com.illucit.partyinvoice.PartyInvoiceApp</mainClass>
 					<deployDir>${project.basedir}/resources/deploy</deployDir>
+					<vendor>illucIT Software</vendor>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -114,23 +123,11 @@
 	</build>
 
 	<repositories>
-		<!-- Planet Metax -->
-		<repository>
-			<id>planet-metax</id>
-			<name>Planet-Metax Maven Repository</name>
-			<url>http://maven.planet-metax.de</url>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-				<checksumPolicy>warn</checksumPolicy>
-			</releases>
-		</repository>
-
 		<!-- illucIT Company Repository -->
 		<repository>
-			<id>illucit</id>
-			<name>illucIT Company Maven Repository</name>
-			<url>https://maven.illucit.com</url>
+			<id>illucit-public</id>
+			<name>illucIT Public Maven Repository</name>
+			<url>http://repository.illucit.com</url>
 			<releases>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
@@ -138,13 +135,5 @@
 			</releases>
 		</repository>
 	</repositories>
-
-	<distributionManagement>
-		<repository>
-			<id>planet-metax-ssh</id>
-			<name>Planet-Metax Repository SSH Connector</name>
-			<url>scpexe://maven.planet-metax.de/home/metax/maven</url>
-		</repository>
-	</distributionManagement>
 
 </project>
