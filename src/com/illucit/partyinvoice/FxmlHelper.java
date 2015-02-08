@@ -22,10 +22,45 @@ public class FxmlHelper {
 
 	private static final String VIEW_PREFIX = "view/";
 
+	/**
+	 * Load view from FXML file. No handler for Stage and controller is given.
+	 * If the controller is an {@link AbstractController}, the app is
+	 * automatically assigned.
+	 * 
+	 * @param app
+	 *            the app
+	 * @param view
+	 *            view location (relative to the view prefix
+	 *            {@link #VIEW_PREFIX} in the same package of this class)
+	 * @param <T>
+	 *            parent element class
+	 * @return parent of the FXML document
+	 */
 	public static <T> T loadFxml(PartyInvoiceApp app, String view) {
 		return loadFxml(app, view, Object.class, null);
 	}
 
+	/**
+	 * Load view from FXML file with a handle for the controller. If the
+	 * controller is an {@link AbstractController}, the app is automatically
+	 * assigned.
+	 * 
+	 * @param app
+	 *            the app
+	 * @param view
+	 *            view location (relative to the view prefix
+	 *            {@link #VIEW_PREFIX} in the same package of this class)
+	 * @param controllerClass
+	 *            class the controller should have
+	 * @param handler
+	 *            handler to be called when the FXML and the controller are
+	 *            loaded
+	 * @param <C>
+	 *            controller class
+	 * @param <T>
+	 *            parent element class
+	 * @return parent of the FXML document
+	 */
 	public static <C, T> T loadFxml(PartyInvoiceApp app, String view, Class<C> controllerClass,
 			InnerDocumentHandler<C> handler) {
 
@@ -55,9 +90,9 @@ public class FxmlHelper {
 		// Give the controller access to the main app.
 		C controller = loader.getController();
 		if (controller instanceof AbstractController) {
-			AbstractController cntrlr = (AbstractController) controller;
-			cntrlr.setApp(app);
-			cntrlr.setStage(app.getPrimaryStage());
+			AbstractController abstractController = (AbstractController) controller;
+			abstractController.setApp(app);
+			abstractController.setStage(app.getPrimaryStage());
 		}
 
 		if (handler != null) {
@@ -100,7 +135,7 @@ public class FxmlHelper {
 	 * @param controllerClass
 	 *            class the controller should have
 	 * @param handler
-	 *            handle to be called when the FXML and the controller are
+	 *            handler to be called when the FXML and the controller are
 	 *            loaded
 	 * @param <C>
 	 *            controller class
@@ -139,9 +174,9 @@ public class FxmlHelper {
 		// Give the controller access to the main app.
 		C controller = loader.getController();
 		if (controller instanceof AbstractController) {
-			AbstractController cntrlr = (AbstractController) controller;
-			cntrlr.setApp(app);
-			cntrlr.setStage(stage);
+			AbstractController abstractController = (AbstractController) controller;
+			abstractController.setApp(app);
+			abstractController.setStage(stage);
 		}
 
 		if (handler != null) {
@@ -151,16 +186,46 @@ public class FxmlHelper {
 		return stage;
 	}
 
+	/**
+	 * Functional interface for to handle a loaded stage.
+	 * 
+	 * @author Christian Simon
+	 *
+	 * @param <C>
+	 *            controller type
+	 */
 	@FunctionalInterface
 	public static interface StageHandler<C> {
 
+		/**
+		 * Handle the stage and controller has been loaded.
+		 * 
+		 * @param stage
+		 *            created stage
+		 * @param controller
+		 *            loaded controller
+		 */
 		public void handleStage(Stage stage, C controller);
 
 	}
 
+	/**
+	 * Functional interface for to handle a loaded inner document.
+	 * 
+	 * @author Christian Simon
+	 *
+	 * @param <C>
+	 *            controller type
+	 */
 	@FunctionalInterface
 	public static interface InnerDocumentHandler<C> {
 
+		/**
+		 * Handle the inner document and controller has been loaded.
+		 * 
+		 * @param controller
+		 *            loaded controller
+		 */
 		public void handleDocument(C controller);
 
 	}

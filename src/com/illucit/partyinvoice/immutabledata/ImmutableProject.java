@@ -29,6 +29,12 @@ import com.illucit.partyinvoice.xmldata.XmlItem;
 import com.illucit.partyinvoice.xmldata.XmlPerson;
 import com.illucit.partyinvoice.xmldata.XmlProject;
 
+/**
+ * Immutable project data.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 
 	private static final long serialVersionUID = -734021803698594857L;
@@ -49,18 +55,38 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	 * --- Getters ---
 	 */
 
+	/**
+	 * Get the title of the project.
+	 * 
+	 * @return title as String
+	 */
 	public String getTitle() {
 		return title;
 	}
 
+	/**
+	 * Get the list of {@link ImmutablePerson}s.
+	 * 
+	 * @return immutable list of persons
+	 */
 	public List<ImmutablePerson> getPersons() {
 		return persons;
 	}
 
+	/**
+	 * Get the list of {@link ImmutableGroup}s.
+	 * 
+	 * @return immutable list of groups
+	 */
 	public List<ImmutableGroup> getGroups() {
 		return groups;
 	}
 
+	/**
+	 * Get the list of {@link ImmutableInvoice}s.
+	 * 
+	 * @return immutable list of invoices
+	 */
 	public List<ImmutableInvoice> getInvoices() {
 		return invoices;
 	}
@@ -70,7 +96,7 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	 */
 
 	/**
-	 * Create new, empty ImmutableProject.
+	 * Create new, empty {@link ImmutableProject}.
 	 */
 	public ImmutableProject() {
 		this.title = "untitled";
@@ -89,11 +115,31 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		this(project.getTitle(), getPersonList(project), getGroupList(project), getInvoiceList(project));
 	}
 
+	/**
+	 * Create project from previous state and operation.
+	 * 
+	 * @param currentState
+	 *            previus state
+	 * @param operation
+	 *            operation to perform
+	 */
 	public ImmutableProject(ImmutableProject currentState, Operation operation) {
 		this(currentState.getTitle(), getPersonList(currentState, operation), getGroupList(currentState, operation),
 				getInvoiceList(currentState, operation));
 	}
 
+	/**
+	 * Create {@link ImmutableProject} from raw base data.
+	 * 
+	 * @param title
+	 *            title of the project
+	 * @param persons
+	 *            list of person data
+	 * @param groups
+	 *            list of group data
+	 * @param invoices
+	 *            list of invoice data
+	 */
 	private ImmutableProject(String title, List<? extends Person> persons, List<? extends Group> groups,
 			List<? extends Invoice> invoices) {
 
@@ -192,14 +238,43 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	 * --- Utility Methods ---
 	 */
 
+	/**
+	 * Increment counting map by adding the value to the existing value in the
+	 * given map for the given key, and initialize it with the given value if
+	 * the key does not exist in the map, yet.
+	 * 
+	 * @param map
+	 *            map with values
+	 * @param key
+	 *            key to increment
+	 * @param value
+	 *            increment value
+	 */
 	private static <T> void mapInc(Map<T, Long> map, T key, long value) {
 		map.merge(key, value, (oldValue, inc) -> oldValue + inc);
 	}
 
+	/**
+	 * Get the List of Persons from an XML project.
+	 * 
+	 * @param project
+	 *            xml project
+	 * @return list of persons
+	 */
 	private static List<? extends Person> getPersonList(XmlProject project) {
 		return project.getPersons();
 	}
 
+	/**
+	 * Get the list of persons from a previous state with a given operation that
+	 * could influcene the person list.
+	 * 
+	 * @param project
+	 *            previous project state
+	 * @param operation
+	 *            operation that is currently performed
+	 * @return updated list of persons
+	 */
 	private static List<? extends Person> getPersonList(ImmutableProject project, Operation operation) {
 		List<PersonDTO> persons = new LinkedList<>();
 		for (ImmutablePerson person : project.getPersons()) {
@@ -226,19 +301,53 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		return persons;
 	}
 
+	/**
+	 * Get the list of Groups from an XML project.
+	 * 
+	 * @param project
+	 *            xml project
+	 * @return list of groups
+	 */
 	private static List<? extends Group> getGroupList(XmlProject project) {
 		return project.getGroups();
 	}
 
+	/**
+	 * Get the list of groups from a previous state with a given operation that
+	 * could influcene the group list.
+	 * 
+	 * @param project
+	 *            previous project state
+	 * @param operation
+	 *            operation that is currently performed
+	 * @return updated list of groups
+	 */
 	private static List<ImmutableGroup> getGroupList(ImmutableProject project, Operation operation) {
 		// TODO: Handle operations
 		return project.getGroups();
 	}
 
+	/**
+	 * Get the list of Invoices from an XML project.
+	 * 
+	 * @param project
+	 *            xml project
+	 * @return list of invoices
+	 */
 	private static List<? extends Invoice> getInvoiceList(XmlProject project) {
 		return project.getInvoices();
 	}
 
+	/**
+	 * Get the list of invoices from a previous state with a given operation
+	 * that could influcene the invoices list.
+	 * 
+	 * @param project
+	 *            previous project state
+	 * @param operation
+	 *            operation that is currently performed
+	 * @return updated list of invoices
+	 */
 	private static List<InvoiceDTO> getInvoiceList(ImmutableProject project, Operation operation) {
 		List<InvoiceDTO> invoices = new LinkedList<>();
 		for (ImmutableInvoice invoice : project.getInvoices()) {
@@ -266,6 +375,18 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		return invoices;
 	}
 
+	/**
+	 * Get the list of items from a previous invoice state with a given
+	 * operation that could influcene the items list.
+	 * 
+	 * @param project
+	 *            previous project state
+	 * @param invoice
+	 *            previous invoice state
+	 * @param operation
+	 *            operation that is currently performed
+	 * @return updated list of items
+	 */
 	private static List<ItemDTO> getItemList(ImmutableProject project, ImmutableInvoice invoice, Operation operation) {
 		List<ItemDTO> items = new LinkedList<>();
 		for (ImmutableItem item : invoice.getItems()) {
@@ -306,7 +427,7 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 	/**
 	 * Copy to XML Structure (Save to XML).
 	 * 
-	 * @return mutable prject with JAXB annotations
+	 * @return mutable project with JAXB annotations
 	 */
 	public XmlProject getXmlProject() {
 		XmlProject project = new XmlProject();
@@ -351,6 +472,13 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 		return project;
 	}
 
+	/**
+	 * DTO implementation of {@link Person}, only as intermediate format for
+	 * {@link ImmutableProject} update.
+	 * 
+	 * @author Christian Simon
+	 *
+	 */
 	private static class PersonDTO implements Person {
 
 		private final int id;
@@ -378,6 +506,13 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 
 	}
 
+	/**
+	 * DTO implementation of {@link Invoice}, only as intermediate format for
+	 * {@link ImmutableProject} update.
+	 * 
+	 * @author Christian Simon
+	 *
+	 */
 	private static class InvoiceDTO implements Invoice {
 
 		private final int id;
@@ -417,6 +552,13 @@ public class ImmutableProject implements Mutation<Operation, ImmutableProject> {
 
 	}
 
+	/**
+	 * DTO implementation of {@link Item}, only as intermediate format for
+	 * {@link ImmutableProject} update.
+	 * 
+	 * @author Christian Simon
+	 *
+	 */
 	private static class ItemDTO implements Item {
 
 		private final int id;

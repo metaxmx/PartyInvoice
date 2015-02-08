@@ -61,7 +61,7 @@ public class Dialogs {
 	}
 
 	/**
-	 * Show the dialog "You have unsaved changes ..." if there are unfaved
+	 * Show the dialog "You have unsaved changes ..." if there are unsaved
 	 * changes in the main window. The given callback is executed, when either
 	 * there is nothing to save, or when the user chooses to discard the changes
 	 * or when the user successfull saves the changes. The callback is not

@@ -2,6 +2,12 @@ package com.illucit.partyinvoice.immutabledata;
 
 import com.illucit.partyinvoice.data.Item;
 
+/**
+ * Implementation of {@link Item} in {@link ImmutableBaseData} hierarchy.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class ImmutableItem extends ImmutableBaseData implements Item {
 
 	private static final long serialVersionUID = -623482843661020919L;
@@ -46,6 +52,11 @@ public class ImmutableItem extends ImmutableBaseData implements Item {
 		return paidByPerson == null ? null : paidByPerson.getId();
 	}
 
+	/**
+	 * Get the "paid by" person object.
+	 * 
+	 * @return person object or null
+	 */
 	public ImmutablePerson getGetPaidByPerson() {
 		return paidByPerson;
 	}
@@ -55,6 +66,11 @@ public class ImmutableItem extends ImmutableBaseData implements Item {
 		return groupToPayGroup == null ? null : groupToPayGroup.getId();
 	}
 
+	/**
+	 * Get the "group to pay" group object.
+	 * 
+	 * @return group object or null
+	 */
 	public ImmutableGroup getGroupToPayGroup() {
 		return groupToPayGroup;
 	}
@@ -64,6 +80,11 @@ public class ImmutableItem extends ImmutableBaseData implements Item {
 		return personToPayPerson == null ? null : personToPayPerson.getId();
 	}
 
+	/**
+	 * Get the "person to pay" person object.
+	 * 
+	 * @return person object or null
+	 */
 	public ImmutablePerson getPersonToPayPerson() {
 		return personToPayPerson;
 	}
@@ -72,6 +93,24 @@ public class ImmutableItem extends ImmutableBaseData implements Item {
 	 * --- Constructors ---
 	 */
 
+	/**
+	 * Create immutable item.
+	 * 
+	 * @param id
+	 *            ID of item
+	 * @param title
+	 *            title of item
+	 * @param price
+	 *            price of item
+	 * @param quantity
+	 *            quanitity of item
+	 * @param paidBy
+	 *            "paid by" person object (optional)
+	 * @param groupToPay
+	 *            "group to pay" group object (optional)
+	 * @param personToPay
+	 *            "person to pay" person object (optional)
+	 */
 	public ImmutableItem(int id, String title, long price, int quantity, ImmutablePerson paidBy,
 			ImmutableGroup groupToPay, ImmutablePerson personToPay) {
 		super(id);

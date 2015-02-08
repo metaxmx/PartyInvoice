@@ -96,20 +96,35 @@ public class PartyInvoiceApp extends Application {
 			this.view = view;
 		}
 
+		/**
+		 * Get the FXML file of the view (relative to the view root
+		 * com/illucit/partyinvoice/view).
+		 * 
+		 * @return path to FXML file as String
+		 */
 		public String getView() {
 			return view;
 		}
 	}
 
+	/** Root view for main window (including menu). */
 	public static final String VIEW_ROOT = "RootLayout.fxml";
+	/** View with the contents of the main window. */
 	public static final String VIEW_MAIN = "MainLayout.fxml";
+	/** View for the message box. */
 	public static final String VIEW_MESSAGE = "MessageView.fxml";
+	/** View for the "Save?" confirmation dialog. */
 	public static final String VIEW_SAVECONFIRM = "SaveConfirmView.fxml";
+	/** Vioew for the about dialog. */
 	public static final String VIEW_ABOUT = "AboutView.fxml";
 
+	/** Right-side view "Welcome". */
 	public static final String VIEW_WELCOME = "WelcomeView.fxml";
+	/** Right-side view "Persons". */
 	public static final String VIEW_PERSONS = "PersonView.fxml";
+	/** Right-side view "Invoices". */
 	public static final String VIEW_INVOICES = "InvoicesView.fxml";
+	/** Right-side view "Result". */
 	public static final String VIEW_RESULT = "ResultView.fxml";
 
 	private final Map<String, Parent> loadedViews = new ConcurrentHashMap<>();
@@ -256,6 +271,12 @@ public class PartyInvoiceApp extends Application {
 		primaryStage.setScene(scene);
 	}
 
+	/**
+	 * Select a view to be active.
+	 * 
+	 * @param selectedView
+	 *            right side view that should be active
+	 */
 	public void selectView(SelectedView selectedView) {
 		this.view = selectedView;
 		String viewFile = selectedView.getView();
@@ -265,6 +286,11 @@ public class PartyInvoiceApp extends Application {
 		rootController.highlightLink();
 	}
 
+	/**
+	 * Get the active right side view.
+	 * 
+	 * @return active right side view
+	 */
 	public SelectedView getView() {
 		return view;
 	}
@@ -287,35 +313,90 @@ public class PartyInvoiceApp extends Application {
 		return primaryStage;
 	}
 
+	/**
+	 * Get the observable list containing the persons of the current project.
+	 * 
+	 * @return list of person models
+	 */
 	public ObservableList<PersonModel> getPersonList() {
 		return personList;
 	}
 
+	/**
+	 * Get the observable list containing the person names of the current
+	 * project.
+	 * 
+	 * @return list of person names
+	 */
 	public ObservableList<PersonListModel> getPersonNameList() {
 		return personNameList;
 	}
 
+	/**
+	 * Get the observable list containing the person names of the current
+	 * project, include an empty entry which can be interpretet as null.
+	 * 
+	 * @return list of person names
+	 */
 	public ObservableList<PersonListModel> getPersonNameListNullable() {
 		return personNameListNullable;
 	}
 
+	/**
+	 * Get the observable list containing the invoice models of the current
+	 * project.
+	 * 
+	 * @return list of invoice models
+	 */
 	public ObservableList<InvoiceModel> getInvoiceList() {
 		return invoiceList;
 	}
 
+	/**
+	 * Set the object property binding for the currently selected invoice in the
+	 * {@link SelectedView#Invoices} view. A change handler for the selected
+	 * invoice is added to refresh the data for the item list belonging to
+	 * current invoice.
+	 * 
+	 * @param selectedInvoiceProperty
+	 *            property for the selected invoice
+	 */
 	public void setSelectedInvoiceProperty(ReadOnlyObjectProperty<InvoiceModel> selectedInvoiceProperty) {
 		this.selectedInvoiceProperty = selectedInvoiceProperty;
 		this.selectedInvoiceProperty.addListener((observable, oldVal, newVal) -> refreshItemData(newVal, false));
 	}
 
+	/**
+	 * Get the observable list containing the item models of the currently
+	 * selected invoice.
+	 * 
+	 * @return list of item models
+	 */
 	public ObservableList<ItemModel> getItemList() {
 		return itemList;
 	}
 
+	/**
+	 * Get the observable list containing the "to pay" models of the current
+	 * project:
+	 * <ul>
+	 * <li>Everybody</li>
+	 * <li>One model for each group</li>
+	 * <li>One model for each person</li>
+	 * </ul>
+	 * 
+	 * @return list of "to pay" models
+	 */
 	public ObservableList<ToPayModel> getToPayList() {
 		return toPayList;
 	}
 
+	/**
+	 * Get the observable list containing the result models of the current
+	 * project.
+	 * 
+	 * @return list of result models
+	 */
 	public ObservableList<ResultModel> getResultList() {
 		return resultList;
 	}
@@ -335,6 +416,9 @@ public class PartyInvoiceApp extends Application {
 		dialogs.showModalDialog(aboutStage);
 	}
 
+	/**
+	 * Open the web browser and display the illucit.com website.
+	 */
 	public void followIllucitHyperlink() {
 		getHostServices().showDocument("https://www.illucit.com");
 	}
@@ -357,6 +441,13 @@ public class PartyInvoiceApp extends Application {
 		});
 	}
 
+	/**
+	 * Refresh all observable lists to reflact changes in the data.
+	 * 
+	 * @param clear
+	 *            flag if existing models should be updated if possible (clear =
+	 *            false) or all models should be recreated (clear = true)
+	 */
 	private void refreshObserableData(boolean clear) {
 		updateList(personList, projectHolder.getProject().getPersons(), PersonModel::new, clear);
 		updateList(personNameList, projectHolder.getProject().getPersons(), PersonListModel::new, clear);
@@ -372,6 +463,13 @@ public class PartyInvoiceApp extends Application {
 		updateUndoRedo();
 	}
 
+	/**
+	 * Construct a list which will contain all {@link ImmutablePerson} entries
+	 * defind in the project with an additional entry with id = 0 which can be
+	 * interpretet as "null".
+	 * 
+	 * @return list with {@link ImmutablePerson}
+	 */
 	private List<ImmutablePerson> getPersonListWithNull() {
 		// Add pseudo person wiothout name and with id 0 to emulate "null" entry
 		ImmutablePerson nullPerson = new ImmutablePerson(0, "", 0, 0);
@@ -381,6 +479,15 @@ public class PartyInvoiceApp extends Application {
 		return result;
 	}
 
+	/**
+	 * Refresh the list of items which belong to the currently selected invoice.
+	 * 
+	 * @param model
+	 *            current invoice model
+	 * @param clear
+	 *            flag if existing models should be updated if possible (clear =
+	 *            false) or all models should be recreated (clear = true)
+	 */
 	private void refreshItemData(InvoiceModel model, boolean clear) {
 		if (model == null) {
 			itemList.clear();
@@ -402,7 +509,7 @@ public class PartyInvoiceApp extends Application {
 	}
 
 	/**
-	 * Create data for a new project
+	 * Create data for a new project.
 	 */
 	private void initializeProject() {
 		this.projectHolder = new ImmutableProjectHolder();
@@ -491,24 +598,48 @@ public class PartyInvoiceApp extends Application {
 		return false;
 	}
 
+	/**
+	 * Perform any abstract operation to the current project state and then
+	 * reload the observable data.
+	 * 
+	 * @param operation
+	 *            operation to perform
+	 */
 	public void performOperation(Operation operation) {
 		modifyProjectHolder(operation::operate);
 	}
 
+	/**
+	 * Reset project to the latest undo step.
+	 */
 	public void undo() {
 		modifyProjectHolder(ImmutableProjectHolder::undo);
 	}
 
+	/**
+	 * Forward project to the next redo step.
+	 */
 	public void redo() {
 		modifyProjectHolder(ImmutableProjectHolder::redo);
 	}
 
+	/**
+	 * Modify the project holder by any project holder transformation and then
+	 * reload the observable data.
+	 * 
+	 * @param transformation
+	 *            transformation to perform
+	 */
 	private void modifyProjectHolder(Function<ImmutableProjectHolder, ImmutableProjectHolder> transformation) {
 		this.projectHolder = transformation.apply(projectHolder);
 		refreshObserableData(false);
 		this.changed = true;
 	}
 
+	/**
+	 * Set menu entries for "redo"/"undo" to enabled/disabled for the current
+	 * project holder state.
+	 */
 	private void updateUndoRedo() {
 		if (rootController != null) {
 			rootController.setUndoEnabled(projectHolder.hasUndoStep());
@@ -516,7 +647,26 @@ public class PartyInvoiceApp extends Application {
 		}
 	}
 
-	private <D extends BaseData, M extends BaseModel<D>> void updateList(ObservableList<M> observableList,
+	/**
+	 * Abstract method to refresh an {@link ObservableList} and maintian
+	 * existing models.
+	 * 
+	 * @param observableList
+	 *            list that should be changed
+	 * @param updatedData
+	 *            base data for the updated state
+	 * @param constructor
+	 *            constructor for the model type from the data of a base data
+	 *            type
+	 * @param clear
+	 *            flag if existing models should be updated if possible (clear =
+	 *            false) or all models should be recreated (clear = true)
+	 * @param <D>
+	 *            base data type
+	 * @param <M>
+	 *            base model type (compatible to &lt;D&gt;)
+	 */
+	private static <D extends BaseData, M extends BaseModel<D>> void updateList(ObservableList<M> observableList,
 			List<D> updatedData, Function<D, M> constructor, boolean clear) {
 
 		if (clear) {
@@ -554,6 +704,13 @@ public class PartyInvoiceApp extends Application {
 
 	}
 
+	/**
+	 * Update "to pay" list.
+	 * 
+	 * @param clear
+	 *            flag if existing models should be updated if possible (clear =
+	 *            false) or all models should be recreated (clear = true)
+	 */
 	private void updateToPayModelList(boolean clear) {
 
 		if (clear) {
@@ -630,30 +787,90 @@ public class PartyInvoiceApp extends Application {
 	 * Operations
 	 */
 
+	/**
+	 * Perform operation: add person.
+	 * 
+	 * @param name
+	 *            new name
+	 */
 	public void addPerson(String name) {
 		performOperation(new AddPersonOp(name));
 	}
 
+	/**
+	 * Perform operation: change person.
+	 * 
+	 * @param id
+	 *            id of existing person
+	 * @param newName
+	 *            new name of person
+	 */
 	public void changePerson(int id, String newName) {
 		performOperation(new ChangePersonOp(id, newName));
 	}
 
+	/**
+	 * Perform operation: delete person.
+	 * 
+	 * @param id
+	 *            id of existing person
+	 */
 	public void deletePerson(int id) {
 		performOperation(new DelPersonOp(id));
 	}
 
+	/**
+	 * Perform operation: add invoice.
+	 * 
+	 * @param title
+	 *            title of new invoice
+	 * @param paidBy
+	 *            "paid by" person of new invoice
+	 */
 	public void addInvoice(String title, int paidBy) {
 		performOperation(new AddInvoiceOp(title, paidBy));
 	}
 
+	/**
+	 * Perform operation: change invoice.
+	 * 
+	 * @param id
+	 *            id of existing invoice
+	 * @param newTitle
+	 *            new title of invoice
+	 * @param paidBy
+	 *            new "paid by" person of invoice
+	 * */
 	public void changeInvoice(int id, String newTitle, int paidBy) {
 		performOperation(new ChangeInvoiceOp(id, newTitle, paidBy));
 	}
 
+	/**
+	 * Perform operation: delete invoice.
+	 * 
+	 * @param id
+	 *            id of existing invoice
+	 */
 	public void deleteInvoice(int id) {
 		performOperation(new DelInvoiceOp(id));
 	}
 
+	/**
+	 * Perform operation: add item to selected invoice.
+	 * 
+	 * @param title
+	 *            title of new item
+	 * @param price
+	 *            price of new item
+	 * @param quantity
+	 *            quantity of new item
+	 * @param paidBy
+	 *            "paid by" person of new item
+	 * @param personToPay
+	 *            "person to pay" person of new item
+	 * @param groupToPay
+	 *            "group to pay" group of new item
+	 */
 	public void addItem(String title, long price, int quantity, Integer paidBy, Integer personToPay, Integer groupToPay) {
 		InvoiceModel selectedInvoice = this.selectedInvoiceProperty.get();
 		if (selectedInvoice == null) {
@@ -662,11 +879,35 @@ public class PartyInvoiceApp extends Application {
 		performOperation(new AddItemOp(selectedInvoice.getId(), title, price, quantity, paidBy, personToPay, groupToPay));
 	}
 
+	/**
+	 * Perform operation: change item.
+	 * 
+	 * @param id
+	 *            id of existing item
+	 * @param title
+	 *            new title of item
+	 * @param price
+	 *            new price of item
+	 * @param quantity
+	 *            new quantity of item
+	 * @param paidBy
+	 *            new "paid by" person of item
+	 * @param personToPay
+	 *            new "person to pay" person of item
+	 * @param groupToPay
+	 *            new "group to pay" group of item
+	 */
 	public void changeItem(int id, String title, long price, int quantity, Integer paidBy, Integer personToPay,
 			Integer groupToPay) {
 		performOperation(new ChangeItemOp(id, title, price, quantity, paidBy, personToPay, groupToPay));
 	}
 
+	/**
+	 * Perform operation: delete item.
+	 * 
+	 * @param id
+	 *            id of existing item
+	 */
 	public void deleteItem(int id) {
 		performOperation(new DelItemOp(id));
 	}

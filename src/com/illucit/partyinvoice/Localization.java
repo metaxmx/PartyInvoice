@@ -17,6 +17,11 @@ public class Localization {
 
 	private static Localization instance = new Localization();
 
+	/**
+	 * Get instance of {@link Localization}.
+	 * 
+	 * @return singleton instance
+	 */
 	public static Localization getInstance() {
 		return instance;
 	}
@@ -28,15 +33,34 @@ public class Localization {
 	private Locale locale = Locale.getDefault();
 	private ResourceBundle bundle;
 
+	/**
+	 * Get a localized String.
+	 * 
+	 * @param key
+	 *            localization key
+	 * @return localized String
+	 */
 	public String getString(String key) {
 		return bundle.getString(key);
 	}
 
+	/**
+	 * Change the currently active locale
+	 * 
+	 * @param locale
+	 *            new locale to use
+	 */
 	public void changeLocale(Locale locale) {
 		this.locale = locale;
 		loadResourceBundle();
 	}
-	
+
+	/**
+	 * Get the resource bundle of the current locale (required for FXML
+	 * localization).
+	 * 
+	 * @return resource bundle
+	 */
 	public ResourceBundle getBundle() {
 		return bundle;
 	}

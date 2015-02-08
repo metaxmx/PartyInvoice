@@ -4,6 +4,12 @@ import java.io.Serializable;
 
 import com.illucit.partyinvoice.data.BaseData;
 
+/**
+ * Abstract implementation of {@link BaseData}.
+ * 
+ * @author Christian Simon
+ *
+ */
 public abstract class ImmutableBaseData implements BaseData, Serializable {
 
 	private static final long serialVersionUID = -3933667836082399386L;
@@ -27,6 +33,12 @@ public abstract class ImmutableBaseData implements BaseData, Serializable {
 	 * --- Constructors ---
 	 */
 
+	/**
+	 * Create base data
+	 * 
+	 * @param id
+	 *            ID of data
+	 */
 	public ImmutableBaseData(int id) {
 		this.id = id;
 	}

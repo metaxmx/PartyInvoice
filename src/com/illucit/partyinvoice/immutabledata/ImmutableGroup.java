@@ -6,6 +6,12 @@ import java.util.List;
 
 import com.illucit.partyinvoice.data.Group;
 
+/**
+ * Implementation of {@link Group} in {@link ImmutableBaseData} hierarchy.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class ImmutableGroup extends ImmutableBaseData implements Group {
 
 	private static final long serialVersionUID = -8019203314162371256L;
@@ -27,7 +33,12 @@ public class ImmutableGroup extends ImmutableBaseData implements Group {
 		return name;
 	}
 
-	public List<ImmutablePerson> getPersonsX() {
+	/**
+	 * Get the list of {@link ImmutablePerson}s.
+	 * 
+	 * @return list of persons
+	 */
+	public List<ImmutablePerson> getImmutablePersons() {
 		return persons;
 	}
 
@@ -40,6 +51,16 @@ public class ImmutableGroup extends ImmutableBaseData implements Group {
 	 * --- Constructors ---
 	 */
 
+	/**
+	 * Create immutable group.
+	 * 
+	 * @param id
+	 *            ID of group
+	 * @param name
+	 *            name of group
+	 * @param persons
+	 *            list of {@code ImmutablePerson}s
+	 */
 	public ImmutableGroup(int id, String name, List<ImmutablePerson> persons) {
 		super(id);
 		this.name = name;

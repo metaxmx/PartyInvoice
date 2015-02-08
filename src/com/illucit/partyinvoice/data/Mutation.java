@@ -9,12 +9,20 @@ import java.io.Serializable;
  * @author Christian Simon
  *
  * @param <O>
- *            operation type
+ *            operation base type
  * @param <I>
  *            immutable base type which supports mutation
  */
 public interface Mutation<O extends Serializable, I extends Mutation<O, I>> extends Serializable {
 
+	/**
+	 * Perform mutation operation and return mutated object. The original object
+	 * is not changed.
+	 * 
+	 * @param operation
+	 *            operation to perform
+	 * @return mutated object
+	 */
 	public I mutate(O operation);
 
 }

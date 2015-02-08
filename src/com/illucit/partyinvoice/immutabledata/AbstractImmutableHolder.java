@@ -5,6 +5,19 @@ import java.util.function.Supplier;
 
 import com.illucit.partyinvoice.data.Mutation;
 
+/**
+ * Abstract implementation of a holder of an immutable object type, which
+ * supports mutations and undo/redo steps.
+ * 
+ * @author Christian Simon
+ *
+ * @param <O>
+ *            operation base class for {@link Mutation}
+ * @param <I>
+ *            immutable data type (extends {@link Mutation})
+ * @param <H>
+ *            {@link AbstractImmutableHolder} implementation class
+ */
 public abstract class AbstractImmutableHolder<O extends Serializable, I extends Mutation<O, I>, H extends AbstractImmutableHolder<O, I, H>>
 		implements Serializable {
 
@@ -32,18 +45,36 @@ public abstract class AbstractImmutableHolder<O extends Serializable, I extends 
 	 * --- Constructors ---
 	 */
 
+	/**
+	 * Create emtpy holder.
+	 */
 	public AbstractImmutableHolder() {
 		this.value = createEmpty();
 		this.undoStep = null;
 		this.redoStep = null;
 	}
 
+	/**
+	 * Create holder containing the data from a {@link Supplier}.
+	 * 
+	 * @param supplier
+	 *            supplier for the immutable data
+	 */
 	protected AbstractImmutableHolder(Supplier<I> supplier) {
 		this.value = supplier.get();
 		this.undoStep = null;
 		this.redoStep = null;
 	}
 
+	/**
+	 * Create new holder state by performing an operation on a previous holder
+	 * state.
+	 * 
+	 * @param before
+	 *            previous holder state
+	 * @param operation
+	 *            operation to perform
+	 */
 	protected AbstractImmutableHolder(H before, O operation) {
 		// Unwrap chain and perform operation
 		this.value = before.value.mutate(operation);
@@ -51,6 +82,20 @@ public abstract class AbstractImmutableHolder<O extends Serializable, I extends 
 		this.undoStep = before.unwrap(castSelf());
 	}
 
+	/**
+	 * Create new holder functioning as undo step of a mutated holder state.
+	 * When a new state is created, the previous step cannot be used as undo
+	 * step, as its redo step would not be the new created state. So the chain
+	 * of undo steps needs to be put in new holder objects, where each one has
+	 * the same immutable data as it had before, but the undo and redo steps are
+	 * linked to a holder of the new chain.
+	 * 
+	 * @param source
+	 *            the original holder object for this state
+	 * @param newRedoStep
+	 *            the step that should be the new redo step of the created
+	 *            object
+	 */
 	protected AbstractImmutableHolder(H source, H newRedoStep) {
 		// Unwrap data and
 		this.value = source.value;
@@ -120,14 +165,31 @@ public abstract class AbstractImmutableHolder<O extends Serializable, I extends 
 	protected abstract I createEmpty();
 
 	/**
-	 * Cast self (to parameter class H).
+	 * Cast self (to implementor class &lt;H&gt;).
 	 * 
-	 * @return this as H
+	 * @return this as &lt;H&gt;
 	 */
 	protected abstract H castSelf();
 
+	/**
+	 * Call the constructor
+	 * {@link AbstractImmutableHolder#AbstractImmutableHolder(AbstractImmutableHolder, AbstractImmutableHolder)}
+	 * implementation (of the implementor class &lt;H&gt;).
+	 * 
+	 * @param newRedoStep
+	 *            holder state which should be the updated redo step of the
+	 *            unwrapped holder state
+	 * @return new holder state
+	 */
 	protected abstract H unwrap(H newRedoStep);
 
+	/**
+	 * Perform operation (cast to implementor class).
+	 * 
+	 * @param operation
+	 *            operation to perform
+	 * @return changed state
+	 */
 	public abstract H operate(O operation);
 
 }
