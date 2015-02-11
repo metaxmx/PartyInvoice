@@ -8,7 +8,7 @@ import javafx.beans.property.SimpleStringProperty;
 import com.illucit.partyinvoice.immutabledata.ImmutableInvoice;
 
 /**
- * Model for an invoice.
+ * Model for an {@link ImmutableInvoice}.
  * 
  * @author Christian Simon
  *
@@ -27,6 +27,12 @@ public class InvoiceModel extends BaseModel<ImmutableInvoice> {
 
 	private final SimpleStringProperty totalProperty = new SimpleStringProperty();
 
+	/**
+	 * Create model.
+	 * 
+	 * @param invoice
+	 *            invoice data
+	 */
 	public InvoiceModel(ImmutableInvoice invoice) {
 		super(invoice);
 		update(invoice);
@@ -42,26 +48,57 @@ public class InvoiceModel extends BaseModel<ImmutableInvoice> {
 		totalProperty.set(currencyToString(invoice.getItems().stream().mapToLong(item -> item.getTotal()).sum()));
 	}
 
+	/**
+	 * Get the property for the title.
+	 * 
+	 * @return title property
+	 */
 	public SimpleStringProperty titleProperty() {
 		return titleProperty;
 	}
 
+	/**
+	 * Get the property for the "paid by" person ID.
+	 * 
+	 * @return "paid by" person ID property
+	 */
 	public SimpleIntegerProperty paidByProperty() {
 		return paidByProperty;
 	}
 
+	/**
+	 * Get the property for the "paid by" person name.
+	 * 
+	 * @return "paid by" person name property
+	 */
 	public SimpleStringProperty paidByNameProperty() {
 		return paidByNameProperty;
 	}
 
+	/**
+	 * Get the property for the "paid by" person model.
+	 * 
+	 * @return "paid by" person model property
+	 */
 	public SimpleObjectProperty<PersonListModel> paidByModelProperty() {
 		return paidByModelProperty;
 	}
 
+	/**
+	 * Get the property for the total number of items (sum of all quantities of
+	 * all the items).
+	 * 
+	 * @return item number property
+	 */
 	public SimpleIntegerProperty itemsProperty() {
 		return itemsProperty;
 	}
 
+	/**
+	 * Get the property for the total price (as currency String)
+	 * 
+	 * @return total price property
+	 */
 	public SimpleStringProperty totalProperty() {
 		return totalProperty;
 	}

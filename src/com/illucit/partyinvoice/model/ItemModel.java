@@ -9,6 +9,12 @@ import javafx.beans.property.SimpleStringProperty;
 
 import com.illucit.partyinvoice.immutabledata.ImmutableItem;
 
+/**
+ * Model for and {@link ImmutableItem}.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class ItemModel extends BaseModel<ImmutableItem> {
 
 	private final SimpleStringProperty titleProperty = new SimpleStringProperty();
@@ -35,6 +41,12 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 
 	private final SimpleObjectProperty<ToPayModel> toPayModelProperty = new SimpleObjectProperty<>();
 
+	/**
+	 * Create model.
+	 * 
+	 * @param item
+	 *            item data
+	 */
 	public ItemModel(ImmutableItem item) {
 		super(item);
 		update(item);
@@ -64,50 +76,110 @@ public class ItemModel extends BaseModel<ImmutableItem> {
 		toPayModelProperty.set(toPay);
 	}
 
+	/**
+	 * Get the property for the title.
+	 * 
+	 * @return title property
+	 */
 	public SimpleStringProperty titleProperty() {
 		return titleProperty;
 	}
 
+	/**
+	 * Get the property for the price (in cents).
+	 * 
+	 * @return price property
+	 */
 	public SimpleLongProperty priceProperty() {
 		return priceProperty;
 	}
 
+	/**
+	 * Get the property for the price (as currency String).
+	 * 
+	 * @return price String property
+	 */
 	public SimpleStringProperty priceCurrencyProperty() {
 		return priceCurrencyProperty;
 	}
 
+	/**
+	 * Get the property for the quantity.
+	 * 
+	 * @return quantity property
+	 */
 	public SimpleIntegerProperty quantityProperty() {
 		return quantityProperty;
 	}
 
+	/**
+	 * Get the property for the quantity (as String).
+	 * 
+	 * @return quantity String property
+	 */
 	public SimpleStringProperty quantityStringProperty() {
 		return quantityStringProperty;
 	}
 
+	/**
+	 * Get the property for the total rpice (as currency String)
+	 * 
+	 * @return total price String property
+	 */
 	public SimpleStringProperty totalProperty() {
 		return totalProperty;
 	}
 
+	/**
+	 * Get the property for the "paid by" person ID.
+	 * 
+	 * @return "paid by" person ID property
+	 */
 	public SimpleIntegerProperty paidbyProperty() {
 		return paidbyProperty;
 	}
 
-	public SimpleIntegerProperty personToPayProperty() {
-		return personToPayProperty;
-	}
-
-	public SimpleIntegerProperty groupToPayProperty() {
-		return groupToPayProperty;
-	}
-
+	/**
+	 * Get the property for the "paid by" person name.
+	 * 
+	 * @return "paid by" person name property
+	 */
 	public SimpleStringProperty paidByNameProperty() {
 		return paidByNameProperty;
 	}
 
+	/**
+	 * Get the property for the "paid by" person model.
+	 * 
+	 * @return "paid by" person model property
+	 */
 	public SimpleObjectProperty<PersonListModel> paidByModelProperty() {
 		return paidByModelProperty;
 	}
 
+	/**
+	 * Get the property for the "person to pay" person ID.
+	 * 
+	 * @return "person to pay" person ID property
+	 */
+	public SimpleIntegerProperty personToPayProperty() {
+		return personToPayProperty;
+	}
+
+	/**
+	 * Get the property for the "group to pay" group ID.
+	 * 
+	 * @return "group to pay" group ID property
+	 */
+	public SimpleIntegerProperty groupToPayProperty() {
+		return groupToPayProperty;
+	}
+
+	/**
+	 * Get the property for the "to pay model".
+	 * 
+	 * @return "to pay model" property
+	 */
 	public SimpleObjectProperty<ToPayModel> toPayModelProperty() {
 		return toPayModelProperty;
 	}

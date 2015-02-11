@@ -9,6 +9,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Project data for XML serialization.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 @XmlRootElement(name = "PartyInvoiceProject")
 public class XmlProject implements Serializable {
 

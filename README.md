@@ -2,7 +2,7 @@ Party Invoice
 =============
 
 Version: 1.0  
-Author: Christian Simon <[simon@illucit.com](simon@illucit.com)>  
+Author: Christian Simon <[simon@illucit.com](mailto:simon@illucit.com)>  
 Copyright: illucit Software  
 Website: [www.illucit.com](https://www.illucit.com)
 

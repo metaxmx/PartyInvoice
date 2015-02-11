@@ -30,6 +30,12 @@ import com.illucit.partyinvoice.model.PersonListModel;
 import com.illucit.partyinvoice.model.ToPayModel;
 import com.illucit.partyinvoice.model.ToPayModel.ToPayType;
 
+/**
+ * Controller for "Manage invoice" view.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class InvoicesController extends AbstractController {
 
 	/*
@@ -198,14 +204,39 @@ public class InvoicesController extends AbstractController {
 
 	}
 
+	/**
+	 * Check if a given input String is valid as price.
+	 * 
+	 * @param value
+	 *            input String
+	 * @return true if input was valid price
+	 */
 	private static boolean isPriceInvalid(String value) {
 		return resolvePrice(value) == null;
 	}
 
+	/**
+	 * Check if a given input String is valid as quantity.
+	 * 
+	 * @param value
+	 *            input String
+	 * @return true if input was valid quantity
+	 */
 	private static boolean isQuantityInvalid(String value) {
 		return resolveQuantity(value) == null;
 	}
 
+	/**
+	 * Resolving function to get the "total price" as (currency String) from a
+	 * price and a quantity input String.
+	 * 
+	 * @param priceValue
+	 *            price String to parse
+	 * @param quantityValue
+	 *            quantity String to parse
+	 * @return total price as currency (with the currency representation of zero
+	 *         if one of the input strings is invalid)
+	 */
 	private static String resolveTotal(String priceValue, String quantityValue) {
 		long total = 0;
 		Integer quantity = resolveQuantity(quantityValue);
@@ -216,6 +247,13 @@ public class InvoicesController extends AbstractController {
 		return currencyToString(total);
 	}
 
+	/**
+	 * Parse quantity value from input String.
+	 * 
+	 * @param value
+	 *            input String
+	 * @return input parsed as quantity or null if parsing not possible
+	 */
 	private static Integer resolveQuantity(String value) {
 		try {
 			int quantity = Integer.parseInt(value);
@@ -228,8 +266,18 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Pattern for price parsing.
+	 */
 	private static final Pattern pricePattern = Pattern.compile("^\\s*(-?)\\s*([0-9]*)([,.][0-9]{0,2})?(\\s*€?)?\\s*$");
 
+	/**
+	 * Parse price value from input String.
+	 * 
+	 * @param value
+	 *            input String
+	 * @return input parsed as currency or null if parsing not possible
+	 */
 	private static Long resolvePrice(String value) {
 		Matcher priceMatcher = pricePattern.matcher(value);
 		if (!priceMatcher.matches()) {
@@ -259,6 +307,9 @@ public class InvoicesController extends AbstractController {
 		return price;
 	}
 
+	/**
+	 * Add new invoice.
+	 */
 	@FXML
 	public void addNewInvoice() {
 		String newTitle = newInvoiceTitleField.getText();
@@ -296,6 +347,9 @@ public class InvoicesController extends AbstractController {
 		getApp().changeInvoice(model.getId(), model.titleProperty().get(), model.paidByProperty().get());
 	}
 
+	/**
+	 * Delete selected invoice.
+	 */
 	@FXML
 	public void deleteInvoice() {
 		InvoiceModel selectedModel = invoicesTable.selectionModelProperty().get().selectedItemProperty().get();
@@ -304,6 +358,9 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Add new item to selected invoice.
+	 */
 	@FXML
 	public void addNewItem() {
 		String newTitle = newItemTitleField.getText();
@@ -333,6 +390,12 @@ public class InvoicesController extends AbstractController {
 		newItemTitleField.requestFocus();
 	}
 
+	/**
+	 * Respond to cell event to change the item title.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void changeItemTitle(CellEditEvent<ItemModel, String> event) {
 		ItemModel model = event.getRowValue();
 		String newTitle = event.getNewValue();
@@ -347,6 +410,12 @@ public class InvoicesController extends AbstractController {
 		changeItem(model);
 	}
 
+	/**
+	 * Respond to cell event to change the item price.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void changeItemPrice(CellEditEvent<ItemModel, String> event) {
 		ItemModel model = event.getRowValue();
 		Long newPrice = resolvePrice(event.getNewValue());
@@ -362,6 +431,12 @@ public class InvoicesController extends AbstractController {
 		changeItem(model);
 	}
 
+	/**
+	 * Respond to cell event to change the item quantity.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void changeItemQuantity(CellEditEvent<ItemModel, String> event) {
 		ItemModel model = event.getRowValue();
 		Integer newQuantity = resolveQuantity(event.getNewValue());
@@ -376,6 +451,12 @@ public class InvoicesController extends AbstractController {
 		changeItem(model);
 	}
 
+	/**
+	 * Respond to cell event to change the item "paid by" person.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void changeItemPaidBy(CellEditEvent<ItemModel, PersonListModel> event) {
 		ItemModel model = event.getRowValue();
 		PersonListModel newPaidBy = event.getNewValue();
@@ -383,6 +464,12 @@ public class InvoicesController extends AbstractController {
 		changeItem(model);
 	}
 
+	/**
+	 * Respond to cell event to change the item "to pay" model.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void changeItemToPay(CellEditEvent<ItemModel, ToPayModel> event) {
 		ItemModel model = event.getRowValue();
 		ToPayModel newToPay = event.getNewValue();
@@ -408,12 +495,21 @@ public class InvoicesController extends AbstractController {
 		changeItem(model);
 	}
 
+	/**
+	 * Change item with updated model.
+	 * 
+	 * @param model
+	 *            item model to change
+	 */
 	private void changeItem(ItemModel model) {
 		getApp().changeItem(model.getId(), model.titleProperty().get(), model.priceProperty().get(),
 				model.quantityProperty().get(), zeroToNull(model.paidbyProperty().get()),
 				zeroToNull(model.personToPayProperty().get()), zeroToNull(model.groupToPayProperty().get()));
 	}
 
+	/**
+	 * Delete selected item.
+	 */
 	@FXML
 	public void deletetem() {
 		ItemModel selectedModel = itemTable.selectionModelProperty().get().selectedItemProperty().get();
@@ -422,6 +518,12 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on field in "create invoice" form group.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onCreateInvoiceFieldKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.ENTER) {
@@ -432,6 +534,12 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on invoices table.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onInvoiceTableKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.DELETE) {
@@ -445,6 +553,12 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on field in "create item" form group.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onCreateItemFieldKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.ENTER) {
@@ -455,6 +569,12 @@ public class InvoicesController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on items table.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onItemTableKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.DELETE) {

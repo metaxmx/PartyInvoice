@@ -15,6 +15,12 @@ import com.illucit.partyinvoice.AbstractController;
 import com.illucit.partyinvoice.PartyInvoiceApp;
 import com.illucit.partyinvoice.model.PersonModel;
 
+/**
+ * Controller for "Manage persons" view.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class PersonController extends AbstractController {
 
 	@FXML
@@ -60,6 +66,9 @@ public class PersonController extends AbstractController {
 
 	}
 
+	/**
+	 * Add person.
+	 */
 	@FXML
 	public void addNewPerson() {
 		String newName = newPersonField.textProperty().get();
@@ -67,6 +76,12 @@ public class PersonController extends AbstractController {
 		newPersonField.textProperty().set("");
 	}
 
+	/**
+	 * Respond to cell event to change the person name.
+	 * 
+	 * @param event
+	 *            cell event
+	 */
 	private void editPersonNameEvent(CellEditEvent<PersonModel, String> event) {
 		PersonModel model = event.getRowValue();
 		String newName = event.getNewValue();
@@ -81,6 +96,9 @@ public class PersonController extends AbstractController {
 		getApp().changePerson(model.getId(), model.nameProperty().get());
 	}
 
+	/**
+	 * Delete selected person.
+	 */
 	@FXML
 	public void deletePerson() {
 		PersonModel selectedModel = personTable.selectionModelProperty().get().selectedItemProperty().get();
@@ -89,6 +107,12 @@ public class PersonController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on field in "create person" form group.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onCreateFieldKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.ENTER) {
@@ -99,6 +123,12 @@ public class PersonController extends AbstractController {
 		}
 	}
 
+	/**
+	 * Event handler: Key Pressed on persons table.
+	 * 
+	 * @param event
+	 *            key event
+	 */
 	@FXML
 	public void onTableKeyPressed(KeyEvent event) {
 		if (event.getCode() == KeyCode.DELETE) {

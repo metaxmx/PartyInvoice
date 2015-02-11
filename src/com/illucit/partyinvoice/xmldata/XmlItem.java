@@ -8,6 +8,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.illucit.partyinvoice.data.Item;
 
+/**
+ * Implementation of {@link Item} for XML serialization.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public class XmlItem implements Item, Serializable {
 
 	private static final long serialVersionUID = -1704495666374239967L;

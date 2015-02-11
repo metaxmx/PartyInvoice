@@ -11,13 +11,13 @@ import java.util.regex.Pattern;
  */
 public class CurrencyUtil {
 
-	public static final char MINUS = '-';
+	private static final char MINUS = '-';
 
-	public static final char SPACE = ' ';
+	private static final char SPACE = ' ';
 
-	public static final char COMMA = ',';
+	private static final char COMMA = ',';
 
-	public static final char CURRENCY = '€';
+	private static final char CURRENCY = '€';
 
 	/**
 	 * Convert a long value (denoting the cents) to a String value.

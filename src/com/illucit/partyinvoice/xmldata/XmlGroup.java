@@ -9,6 +9,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.illucit.partyinvoice.data.Group;
 
+/**
+ * Implementation of {@link Group} for XML serialization.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public class XmlGroup implements Group, Serializable {
 
 	private static final long serialVersionUID = 709485074492889160L;

@@ -6,7 +6,7 @@ import javafx.beans.property.SimpleStringProperty;
 import com.illucit.partyinvoice.immutabledata.ImmutablePerson;
 
 /**
- * Model for a person.
+ * Model for an {@link ImmutablePerson}.
  * 
  * @author Christian Simon
  *
@@ -21,6 +21,12 @@ public class PersonModel extends BaseModel<ImmutablePerson> {
 
 	private final SimpleStringProperty differenceProperty = new SimpleStringProperty();
 
+	/**
+	 * Create model.
+	 * 
+	 * @param person
+	 *            person data
+	 */
 	public PersonModel(ImmutablePerson person) {
 		super(person);
 		update(person);
@@ -34,18 +40,38 @@ public class PersonModel extends BaseModel<ImmutablePerson> {
 		differenceProperty.set(currencyToString(person.getDifference()));
 	}
 
+	/**
+	 * Get property for person name.
+	 * 
+	 * @return name property
+	 */
 	public SimpleStringProperty nameProperty() {
 		return nameProperty;
 	}
 
+	/**
+	 * Get property for calculated "paid" (as currency String).
+	 * 
+	 * @return "paid" String property
+	 */
 	public SimpleStringProperty paidProperty() {
 		return paidProperty;
 	}
 
+	/**
+	 * Get property for calculated "share" (as currency String).
+	 * 
+	 * @return "share" String property
+	 */
 	public SimpleStringProperty shareProperty() {
 		return shareProperty;
 	}
 
+	/**
+	 * Get property for calculated "difference" (as currency String).
+	 * 
+	 * @return "difference" String property
+	 */
 	public SimpleStringProperty differenceProperty() {
 		return differenceProperty;
 	}

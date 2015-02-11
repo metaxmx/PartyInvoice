@@ -3,8 +3,17 @@ package com.illucit.partyinvoice.immutabledata;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Test for {@link AbstractImmutableHolder}.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class AbstractImmutableHolderTest {
 
+	/**
+	 * Test creation of {@link AbstractImmutableHolder}.
+	 */
 	@Test
 	public void testImmutableHolder() {
 
@@ -19,6 +28,9 @@ public class AbstractImmutableHolderTest {
 		Assert.assertEquals(holder, holderUndoSelf);
 	}
 
+	/**
+	 * Test creation of {@link AbstractImmutableHolder} with supplier.
+	 */
 	@Test
 	public void testImmutableHolderSupplier() {
 
@@ -28,6 +40,9 @@ public class AbstractImmutableHolderTest {
 		Assert.assertFalse(holder.hasUndoStep());
 	}
 
+	/**
+	 * Test {@link AbstractImmutableHolder} with operations.
+	 */
 	@Test
 	public void testImmutableHolderOperation() {
 
@@ -67,6 +82,9 @@ public class AbstractImmutableHolderTest {
 		Assert.assertTrue(holder3.hasUndoStep());
 	}
 
+	/**
+	 * Test {@link AbstractImmutableHolder} with undo/redo history.
+	 */
 	@Test
 	public void testImmutableHolderHistory() {
 

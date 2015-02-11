@@ -2,6 +2,13 @@ package com.illucit.partyinvoice.immutabledata;
 
 import java.io.Serializable;
 
+/**
+ * Test data for {@link AbstractImmutableHolderTest}.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public class TranslationOperation implements Serializable {
 
 	private static final long serialVersionUID = -7689335164797631962L;

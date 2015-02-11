@@ -13,6 +13,9 @@ import com.illucit.partyinvoice.util.CurrencyUtil;
  */
 public class CurrencyTest {
 
+	/**
+	 * Test {@link CurrencyUtil#currencyToString(long)}.
+	 */
 	@Test
 	public void testCurrencyToString() {
 		Assert.assertEquals("0,00 €", CurrencyUtil.currencyToString(0));
@@ -44,6 +47,9 @@ public class CurrencyTest {
 		Assert.assertEquals("-379,31 €", CurrencyUtil.currencyToString(-37931));
 	}
 
+	/**
+	 * Test {@link CurrencyUtil#stringToCurrency(String)}.
+	 */
 	@Test
 	public void testCurrencyFromString() {
 		Assert.assertEquals(0, CurrencyUtil.stringToCurrency("0,00 €"));

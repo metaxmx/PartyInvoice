@@ -1,5 +1,12 @@
 package com.illucit.partyinvoice.immutabledata;
 
+/**
+ * Test data for {@link AbstractImmutableHolderTest}.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public final class ImmutablePointHolder extends
 		AbstractImmutableHolder<TranslationOperation, ImmutablePoint, ImmutablePointHolder> {
 

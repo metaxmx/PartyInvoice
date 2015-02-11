@@ -8,6 +8,13 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import com.illucit.partyinvoice.data.Person;
 
+/**
+ * Implementation of {@link Person} for XML serialization.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public class XmlPerson implements Person, Serializable {
 
 	private static final long serialVersionUID = 7805314640133016613L;

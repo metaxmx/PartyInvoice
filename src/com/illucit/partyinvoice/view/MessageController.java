@@ -16,10 +16,20 @@ public class MessageController extends AbstractController {
 	@FXML
 	private Label label;
 
+	/**
+	 * Set the message that should be displayed.
+	 * 
+	 * @param msg
+	 *            new message
+	 */
 	public void setMessage(String msg) {
 		label.setText(msg);
 	}
 
+	/**
+	 * Close message dialog.
+	 */
+	@FXML
 	public void close() {
 		getStage().close();
 	}

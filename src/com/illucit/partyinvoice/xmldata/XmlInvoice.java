@@ -10,6 +10,13 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 
 import com.illucit.partyinvoice.data.Invoice;
 
+/**
+ * Implementation of {@link Invoice} for XML serialization.
+ * 
+ * @author Christian Simon
+ *
+ */
+@SuppressWarnings("javadoc")
 public class XmlInvoice implements Invoice, Serializable {
 
 	private static final long serialVersionUID = 7835180357176500986L;

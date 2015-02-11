@@ -10,6 +10,12 @@ import com.illucit.partyinvoice.AbstractController;
 import com.illucit.partyinvoice.PartyInvoiceApp;
 import com.illucit.partyinvoice.model.ResultModel;
 
+/**
+ * Controller for "result" view.
+ * 
+ * @author Christian Simon
+ *
+ */
 public class ResultController extends AbstractController {
 
 	@FXML
