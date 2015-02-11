@@ -33,14 +33,15 @@ public abstract class BaseModel<D extends BaseData> {
 	}
 
 	/**
-	 * Update value of model with new value
+	 * Update value of model with new value.
 	 * 
 	 * @param data
+	 *            updated data
 	 */
 	public abstract void update(D data);
 
 	/**
-	 * Get the ID of the base data, this model is bound to
+	 * Get the ID of the base data, this model is bound to.
 	 * 
 	 * @return base data ID
 	 */

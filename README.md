@@ -17,3 +17,13 @@ Credits
 -------
 
 Icon Set: Mohsen Fakharian [via iconarchive.com](http://www.iconarchive.com/show/christmas-icons-by-mohsenfakharian.html)
+
+Missing Features
+----------------
+- [ ] Support Groups in the UI
+- [ ] Support Project Title in the UI
+- [ ] Prevent deleting of referenced persons
+- [ ] Set file filter for Load/Save
+- [ ] Proof-Reading of English localization
+- [ ] Store latest open files in settings file
+- [ ] Support foreign currencies (currently only Euro is supported)
